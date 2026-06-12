@@ -10,6 +10,8 @@ class Capture {
         this.videoElement = null
         this.videoFrame = null
         this.segData = {}
+        this.canvas = document.createElement("canvas")
+        this.context = this.canvas.getContext("2d", { willReadFrequently: true })
         this.startVideoStream()
         this.segmentDuration = 0
         this.durations = []
@@ -60,7 +62,6 @@ class Capture {
         this.videoElement.onloadedmetadata = (e) => {
             this.videoElement.play()
             this.refresh()
-            this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
         }
 
     }
@@ -76,8 +77,11 @@ class Capture {
 
     }
     async getSegmentColors() {
-        // var image = sharp(this.screenPng)
-        this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
+        // Use persistent canvas for all segment processing to avoid image encoding/decoding overhead
+        this.canvas.width = this.videoElement.videoWidth;
+        this.canvas.height = this.videoElement.videoHeight;
+        this.context.drawImage(this.videoElement, 0, 0);
+
         let width = this.videoElement.videoWidth
         let height = this.videoElement.videoHeight
 
@@ -91,9 +95,6 @@ class Capture {
         await Promise.all(promises)
 
         return this.segData
-
-
-
     }
     async getSegmentLeft(segments, width, height) {
         let cropHeight = Math.floor(height / segments.length)
@@ -130,9 +131,23 @@ class Capture {
         }
     }
     async getCropColors(left, top, width, height) {
-        const crop = await sharp(this.videoFrame).extract({ left, top, width, height }).toBuffer()
-        const { dominant } = await sharp(crop).stats();
-        const { r, g, b } = dominant
+        // Use Canvas API to get pixel data instead of sharp for real-time performance
+        const imageData = this.context.getImageData(left, top, width, height);
+        const data = imageData.data;
+        let r = 0, g = 0, b = 0;
+        const totalPixels = width * height;
+
+        // Optimized average color calculation
+        for (let i = 0; i < data.length; i += 4) {
+            r += data[i];
+            g += data[i + 1];
+            b += data[i + 2];
+        }
+
+        r = Math.floor(r / totalPixels);
+        g = Math.floor(g / totalPixels);
+        b = Math.floor(b / totalPixels);
+
         return this.rgbToHex(r, g, b)
     }
     async crop(left, top, width, height) {
