@@ -1,0 +1,3 @@
+## 2025-05-14 - Canvas API vs Native Modules for High-Frequency Frame Processing
+**Learning:** In Electron apps, bridging from the renderer's `video` element to a native module like `sharp` for per-frame statistics is extremely expensive. The pipeline `Canvas -> DataURL -> Buffer -> Sharp -> Buffer -> Stats` involves multiple CPU-intensive encoding/decoding and base64 string operations.
+**Action:** For simple operations like average color calculation on video frames, use a persistent `HTMLCanvasElement` with `getImageData` and the `willReadFrequently: true` context attribute. This keeps processing entirely in the browser's efficient memory space and eliminates encoding overhead.
