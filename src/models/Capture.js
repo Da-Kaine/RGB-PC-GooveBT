@@ -8,8 +8,9 @@ class Capture {
         this.stream = null
         this.screenId = screenId
         this.videoElement = null
-        this.videoFrame = null
         this.segData = {}
+        this.canvas = document.createElement("canvas")
+        this.ctx = this.canvas.getContext("2d", { willReadFrequently: true })
         this.startVideoStream()
         this.segmentDuration = 0
         this.durations = []
@@ -60,24 +61,20 @@ class Capture {
         this.videoElement.onloadedmetadata = (e) => {
             this.videoElement.play()
             this.refresh()
-            this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
+            this.getVideoFrame()
         }
 
     }
     getVideoFrame() {
-
-        var canvas = document.createElement("canvas");
-        canvas.width = this.videoElement.videoWidth;
-        canvas.height = this.videoElement.videoHeight;
-        var canvasContext = canvas.getContext("2d");
-        canvasContext.drawImage(this.videoElement, 0, 0);
-        window.canvas = canvas
-        return canvas.toDataURL('image/png');
-
+        if (this.canvas.width !== this.videoElement.videoWidth || this.canvas.height !== this.videoElement.videoHeight) {
+            this.canvas.width = this.videoElement.videoWidth;
+            this.canvas.height = this.videoElement.videoHeight;
+        }
+        this.ctx.drawImage(this.videoElement, 0, 0);
     }
     async getSegmentColors() {
         // var image = sharp(this.screenPng)
-        this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
+        this.getVideoFrame()
         let width = this.videoElement.videoWidth
         let height = this.videoElement.videoHeight
 
@@ -130,15 +127,30 @@ class Capture {
         }
     }
     async getCropColors(left, top, width, height) {
-        const crop = await sharp(this.videoFrame).extract({ left, top, width, height }).toBuffer()
-        const { dominant } = await sharp(crop).stats();
-        const { r, g, b } = dominant
-        return this.rgbToHex(r, g, b)
+        // Optimization: Use Canvas API instead of Sharp to avoid expensive buffer copies and native processing
+        const imageData = this.ctx.getImageData(left, top, width, height).data;
+        let r = 0, g = 0, b = 0;
+        const count = imageData.length / 4;
+
+        for (let i = 0; i < imageData.length; i += 4) {
+            r += imageData[i];
+            g += imageData[i + 1];
+            b += imageData[i + 2];
+        }
+
+        r = Math.floor(r / count);
+        g = Math.floor(g / count);
+        b = Math.floor(b / count);
+
+        return this.rgbToHex(r, g, b);
     }
     async crop(left, top, width, height) {
-        await this.capture()
+        // Use the current canvas frame for cropping
+        this.getVideoFrame();
+        const frameBuffer = Buffer.from(this.canvas.toDataURL('image/png').split("base64,")[1], "base64");
+
         console.log('cropped')
-        let croppedImage = await sharp(this.screenPng).extract({ left, top, width, height })
+        let croppedImage = await sharp(frameBuffer).extract({ left, top, width, height })
         const croppedImageBuffer = await croppedImage.toBuffer();
         document.getElementById('cropped-image').src = `data:image/png;base64,${croppedImageBuffer.toString('base64')}`
         return croppedImage
