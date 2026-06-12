@@ -1,15 +1,17 @@
 <template>
   <div class="card mt-3 mb-3">
-    <h5 class="card-header">
+    <h5 class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
       <div
-        class="collapsed d-block"
+        class="collapsed d-block cursor-pointer flex-grow-1"
         data-bs-toggle="collapse"
         data-bs-target="#collapse-collapsed"
         id="heading-collapsed"
       >
-        <i class="fa fa-chevron-down pull-right"></i>
         Video Sync Controls
       </div>
+      <span class="badge" :class="strip.syncMode ? 'bg-danger' : 'bg-secondary'">
+        {{ strip.syncMode ? 'Sync Active' : 'Inactive' }}
+      </span>
     </h5>
     <div
       id="collapse-collapsed"
@@ -57,82 +59,82 @@
 
         <div class="sync">
           <p>Segments formart: 1,2,3,4</p>
-          <div class="row g-3 align-items-center">
+          <div class="row g-3 align-items-center mb-2">
             <div class="col-2">
-              <label for="top" class="col-form-label">Top</label>
+              <label for="top-segments" class="col-form-label fw-bold">Top</label>
             </div>
             <div class="col-auto">
               <input
                 type="text"
-                id="top"
+                id="top-segments"
                 v-model="top"
-                class="form-control"
-                aria-describedby="passwordHelpInline"
+                class="form-control form-control-sm"
+                aria-describedby="topHelp"
               />
             </div>
             <div class="col-auto">
-              <span id="passwordHelpInline" class="form-text">
-                Enter Top segments, from left to right
+              <span id="topHelp" class="form-text small">
+                Left to right
               </span>
             </div>
           </div>
 
-          <div class="row g-3 align-items-center">
+          <div class="row g-3 align-items-center mb-2">
             <div class="col-2">
-              <label for="Bottom" class="col-form-label">Bottom</label>
+              <label for="bottom-segments" class="col-form-label fw-bold">Bottom</label>
             </div>
             <div class="col-auto">
               <input
                 type="text"
-                id="Bottom"
+                id="bottom-segments"
                 v-model="bottom"
-                class="form-control"
-                aria-describedby="passwordHelpInline"
+                class="form-control form-control-sm"
+                aria-describedby="bottomHelp"
               />
             </div>
             <div class="col-auto">
-              <span id="passwordHelpInline" class="form-text">
-                Enter Bottom segments from left to right
+              <span id="bottomHelp" class="form-text small">
+                Left to right
               </span>
             </div>
           </div>
 
-          <div class="row g-3 align-items-center">
+          <div class="row g-3 align-items-center mb-2">
             <div class="col-2">
-              <label for="Left" class="col-form-label">Left</label>
+              <label for="left-segments" class="col-form-label fw-bold">Left</label>
             </div>
             <div class="col-auto">
               <input
                 type="text"
-                id="Left"
+                id="left-segments"
                 v-model="left"
-                class="form-control"
-                aria-describedby="passwordHelpInline"
+                class="form-control form-control-sm"
+                aria-describedby="leftHelp"
               />
             </div>
             <div class="col-auto">
-              <span id="passwordHelpInline" class="form-text">
-                Enter Left segments from top to bottom
+              <span id="leftHelp" class="form-text small">
+                Top to bottom
               </span>
             </div>
           </div>
 
-          <div class="row g-3 align-items-center">
+          <div class="row g-3 align-items-center mb-3">
             <div class="col-2">
-              <label for="Right" class="col-form-label">Right</label>
+              <label for="right-segments" class="col-form-label fw-bold">Right</label>
             </div>
             <div class="col-auto">
               <input
                 type="text"
-                id="Right"
+                id="right-segments"
                 v-model="right"
-                class="form-control"
-                aria-describedby="passwordHelpInline"
+                class="form-control form-control-sm"
+                aria-describedby="rightHelp"
               />
             </div>
             <div class="col-auto">
-              <span id="passwordHelpInline" class="form-text">
-                Enter Right segments from top to bottom
+              <span id="rightHelp" class="form-text small">
+                Top to bottom
               </span>
             </div>
           </div>

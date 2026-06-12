@@ -2,50 +2,62 @@
   <!-- create bootstrap card with -->
   <div class="card">
     <div class="card-body">
-      <h5 class="card-title">
-        Light Strip Controls For: <em>{{ strip.device.name }}</em>
-      </h5>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="card-title mb-0">
+          Controls: <span class="text-primary">{{ strip.device.name }}</span>
+        </h5>
 
-      <button v-if="!isOn" @click="turnOn" class="float-end btn btn-primary">
-        Turn On
-      </button>
-      <button v-if="isOn" @click="turnOff" class="float-end btn btn-danger">
-        Turn Off
-      </button>
-
-      <div class="form-group">
-        <label for="color">Choose Color:</label>
-        <input type="input" class="color-picker" value="#FF0000" name="color" />
+        <div>
+          <button v-if="!isOn" @click="turnOn" class="btn btn-primary shadow-sm">
+            Turn On
+          </button>
+          <button v-if="isOn" @click="turnOff" class="btn btn-danger shadow-sm">
+            Turn Off
+          </button>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="color">Brightness :</label>
-        <vue-slider @change="brightnessChange" v-model="brightness" />
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="form-group mb-3">
+            <label class="form-label fw-bold">Color</label>
+            <div>
+              <input type="input" class="color-picker" value="#FF0000" name="color" />
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group mb-3">
+            <label class="form-label fw-bold">Brightness: {{ brightness }}%</label>
+            <vue-slider @change="brightnessChange" v-model="brightness" :tooltip="'always'" />
+          </div>
+        </div>
       </div>
 
-      <div class="m-3">
-        Music:
-        <div class="btn-group" role="group" aria-label="Scenes">
+      <div class="mb-4">
+        <label class="form-label fw-bold d-block">Music Modes</label>
+        <div class="btn-group flex-wrap" role="group" aria-label="Music Modes">
           <button
             v-for="(music, index) in musicColors"
             :key="index"
             @click="setMusic(music)"
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-outline-secondary text-capitalize"
           >
             {{ music }}
           </button>
         </div>
       </div>
-      <div class="m-3">
-        Scenes:
-        <div class="btn-group" role="group" aria-label="Scenes">
+
+      <div class="mb-4">
+        <label class="form-label fw-bold d-block">Scenes</label>
+        <div class="btn-group flex-wrap" role="group" aria-label="Scenes">
           <button
             v-for="(scene, index) in scenes"
             :key="index"
             @click="setScene(scene)"
             type="button"
-            class="btn btn-secondary"
+            class="btn btn-outline-secondary text-capitalize"
           >
             {{ scene }}
           </button>
