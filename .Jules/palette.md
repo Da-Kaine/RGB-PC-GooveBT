@@ -1,0 +1,3 @@
+## 2025-05-14 - Interactive Device Management in Bluetooth Apps
+**Learning:** In Bluetooth control applications, users value continuity. Providing a "pinned" or "last connected" state even when the device is offline helps ground the UI and makes reconnection feel faster. Collapsing unknown devices reduces visual noise and cognitive load when scanning in crowded environments.
+**Action:** Always implement a categorized device list (Pinned/Favorites -> Supported -> Unknown) for Bluetooth pairing UIs. Storing custom names locally improves personalization when device-provided names are cryptic (e.g., "H619E_XXXX").
