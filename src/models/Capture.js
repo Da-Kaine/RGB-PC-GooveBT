@@ -1,5 +1,4 @@
 const { desktopCapturer } = require('electron')
-const sharp = require('sharp')
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 class Capture {
     constructor(screenId) {
@@ -10,6 +9,9 @@ class Capture {
         this.videoElement = null
         this.videoFrame = null
         this.segData = {}
+        // Persistent canvas for color extraction to avoid GC pressure and repeated allocations
+        this.canvas = document.createElement("canvas")
+        this.canvasContext = this.canvas.getContext("2d", { willReadFrequently: true })
         this.startVideoStream()
         this.segmentDuration = 0
         this.durations = []
@@ -60,24 +62,24 @@ class Capture {
         this.videoElement.onloadedmetadata = (e) => {
             this.videoElement.play()
             this.refresh()
-            this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
+            this.updateVideoFrame()
         }
 
     }
-    getVideoFrame() {
 
-        var canvas = document.createElement("canvas");
-        canvas.width = this.videoElement.videoWidth;
-        canvas.height = this.videoElement.videoHeight;
-        var canvasContext = canvas.getContext("2d");
-        canvasContext.drawImage(this.videoElement, 0, 0);
-        window.canvas = canvas
-        return canvas.toDataURL('image/png');
-
+    /**
+     * Updates the persistent canvas with the current video frame.
+     * Optimization: Replaces toDataURL() with drawImage() on a persistent canvas.
+     */
+    updateVideoFrame() {
+        if (!this.videoElement) return
+        this.canvas.width = this.videoElement.videoWidth;
+        this.canvas.height = this.videoElement.videoHeight;
+        this.canvasContext.drawImage(this.videoElement, 0, 0);
     }
+
     async getSegmentColors() {
-        // var image = sharp(this.screenPng)
-        this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
+        this.updateVideoFrame()
         let width = this.videoElement.videoWidth
         let height = this.videoElement.videoHeight
 
@@ -91,16 +93,14 @@ class Capture {
         await Promise.all(promises)
 
         return this.segData
-
-
-
     }
+
     async getSegmentLeft(segments, width, height) {
         let cropHeight = Math.floor(height / segments.length)
         let cropWidth = Math.floor(0.3 * width)
 
         for (let [index, segment] of segments.entries()) {
-            this.segData[segment] = await this.getCropColors(0, index * cropHeight, cropWidth, cropHeight)
+            this.segData[segment] = this.getCropColors(0, index * cropHeight, cropWidth, cropHeight)
         }
     }
     async getSegmentRight(segments, width, height) {
@@ -108,7 +108,7 @@ class Capture {
         let cropWidth = Math.floor(0.3 * width)
 
         for (let [index, segment] of segments.entries()) {
-            this.segData[segment] = await this.getCropColors(width - cropWidth, index * cropHeight, cropWidth, cropHeight)
+            this.segData[segment] = this.getCropColors(width - cropWidth, index * cropHeight, cropWidth, cropHeight)
         }
     }
     async getSegmentTop(segments, width, height) {
@@ -117,7 +117,7 @@ class Capture {
         let cropWidth = Math.floor(width / segments.length)
 
         for (let [index, segment] of segments.entries()) {
-            this.segData[segment] = await this.getCropColors(index * cropWidth, 0, cropWidth, cropHeight)
+            this.segData[segment] = this.getCropColors(index * cropWidth, 0, cropWidth, cropHeight)
         }
         this.singleSegmentDuration = Date.now() - start
     }
@@ -126,26 +126,48 @@ class Capture {
         let cropWidth = Math.floor(width / segments.length)
 
         for (let [index, segment] of segments.entries()) {
-            this.segData[segment] = await this.getCropColors(index * cropWidth, height - cropHeight, cropWidth, cropHeight)
+            this.segData[segment] = this.getCropColors(index * cropWidth, height - cropHeight, cropWidth, cropHeight)
         }
     }
-    async getCropColors(left, top, width, height) {
-        const crop = await sharp(this.videoFrame).extract({ left, top, width, height }).toBuffer()
-        const { dominant } = await sharp(crop).stats();
-        const { r, g, b } = dominant
-        return this.rgbToHex(r, g, b)
-    }
-    async crop(left, top, width, height) {
-        await this.capture()
-        console.log('cropped')
-        let croppedImage = await sharp(this.screenPng).extract({ left, top, width, height })
-        const croppedImageBuffer = await croppedImage.toBuffer();
-        document.getElementById('cropped-image').src = `data:image/png;base64,${croppedImageBuffer.toString('base64')}`
-        return croppedImage
 
+    /**
+     * Calculates the average color of a region using native getImageData.
+     * Optimization: Replaces sharp.extract().stats() with manual pixel averaging.
+     * This avoids expensive buffer copies and native module overhead in the sync loop.
+     */
+    getCropColors(left, top, width, height) {
+        if (width <= 0 || height <= 0) return "#000000";
+
+        const imageData = this.canvasContext.getImageData(left, top, width, height).data;
+        let r = 0, g = 0, b = 0;
+        const count = imageData.length / 4;
+
+        // Sample every 4th pixel for even better performance if needed,
+        // but for small segments, full average is fine.
+        for (let i = 0; i < imageData.length; i += 4) {
+            r += imageData[i];
+            g += imageData[i + 1];
+            b += imageData[i + 2];
+        }
+
+        return this.rgbToHex(
+            Math.round(r / count),
+            Math.round(g / count),
+            Math.round(b / count)
+        );
     }
+
+    async crop(left, top, width, height) {
+        // Keeping this for potential legacy/debug use, but optimizing it slightly
+        this.updateVideoFrame()
+        const dataUrl = this.canvas.toDataURL('image/png')
+        document.getElementById('cropped-image').src = dataUrl
+        return dataUrl
+    }
+
     createColorBox() {
         let colorViewer = document.getElementById('color-viewer')
+        if (!colorViewer) return
         colorViewer.innerHTML = ""
         for (let segment in this.segData) {
             let color = this.segData[segment]
@@ -163,7 +185,8 @@ class Capture {
                     this.screenshot = source.thumbnail.toDataURL()
                     this.screenSource = source
                     this.screenPng = source.thumbnail.toPNG()
-                    document.getElementById('screenshot-image').src = this.screenshot // The image to display the screenshot
+                    const img = document.getElementById('screenshot-image')
+                    if (img) img.src = this.screenshot
 
                 }
             })
