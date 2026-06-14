@@ -1,5 +1,4 @@
 const { desktopCapturer } = require('electron')
-const sharp = require('sharp')
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 class Capture {
     constructor(screenId) {
@@ -9,6 +8,8 @@ class Capture {
         this.screenId = screenId
         this.videoElement = null
         this.videoFrame = null
+        this.canvas = document.createElement("canvas");
+        this.ctx = this.canvas.getContext("2d", { willReadFrequently: true });
         this.segData = {}
         this.startVideoStream()
         this.segmentDuration = 0
@@ -60,24 +61,19 @@ class Capture {
         this.videoElement.onloadedmetadata = (e) => {
             this.videoElement.play()
             this.refresh()
-            this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
         }
 
     }
-    getVideoFrame() {
-
-        var canvas = document.createElement("canvas");
-        canvas.width = this.videoElement.videoWidth;
-        canvas.height = this.videoElement.videoHeight;
-        var canvasContext = canvas.getContext("2d");
-        canvasContext.drawImage(this.videoElement, 0, 0);
-        window.canvas = canvas
-        return canvas.toDataURL('image/png');
-
+    updateVideoCanvas() {
+        if (this.canvas.width !== this.videoElement.videoWidth || this.canvas.height !== this.videoElement.videoHeight) {
+            this.canvas.width = this.videoElement.videoWidth;
+            this.canvas.height = this.videoElement.videoHeight;
+        }
+        this.ctx.drawImage(this.videoElement, 0, 0);
+        window.canvas = this.canvas
     }
     async getSegmentColors() {
-        // var image = sharp(this.screenPng)
-        this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
+        this.updateVideoCanvas()
         let width = this.videoElement.videoWidth
         let height = this.videoElement.videoHeight
 
@@ -91,9 +87,6 @@ class Capture {
         await Promise.all(promises)
 
         return this.segData
-
-
-
     }
     async getSegmentLeft(segments, width, height) {
         let cropHeight = Math.floor(height / segments.length)
@@ -130,19 +123,23 @@ class Capture {
         }
     }
     async getCropColors(left, top, width, height) {
-        const crop = await sharp(this.videoFrame).extract({ left, top, width, height }).toBuffer()
-        const { dominant } = await sharp(crop).stats();
-        const { r, g, b } = dominant
+        if (width <= 0 || height <= 0) return "#000000";
+        const imageData = this.ctx.getImageData(left, top, width, height);
+        const { r, g, b } = this.getAverageColor(imageData.data);
         return this.rgbToHex(r, g, b)
     }
     async crop(left, top, width, height) {
-        await this.capture()
-        console.log('cropped')
-        let croppedImage = await sharp(this.screenPng).extract({ left, top, width, height })
-        const croppedImageBuffer = await croppedImage.toBuffer();
-        document.getElementById('cropped-image').src = `data:image/png;base64,${croppedImageBuffer.toString('base64')}`
-        return croppedImage
-
+        // This method seems unused in the main sync flow but kept for compatibility if needed.
+        // Simplified to use canvas.
+        this.updateVideoCanvas();
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = width;
+        tempCanvas.height = height;
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCtx.drawImage(this.canvas, left, top, width, height, 0, 0, width, height);
+        const dataUrl = tempCanvas.toDataURL('image/png');
+        document.getElementById('cropped-image').src = dataUrl;
+        return dataUrl;
     }
     createColorBox() {
         let colorViewer = document.getElementById('color-viewer')
@@ -176,6 +173,21 @@ class Capture {
 
     rgbToHex(r, g, b) {
         return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
+    }
+
+    getAverageColor(data) {
+        let r = 0, g = 0, b = 0;
+        const count = data.length / 4;
+        for (let i = 0; i < data.length; i += 4) {
+            r += data[i];
+            g += data[i + 1];
+            b += data[i + 2];
+        }
+        return {
+            r: Math.floor(r / count),
+            g: Math.floor(g / count),
+            b: Math.floor(b / count)
+        };
     }
 }
 
