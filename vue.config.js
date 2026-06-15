@@ -22,6 +22,13 @@ module.exports = defineConfig({
                 "ia32"
               ]
             },
+                {
+                  target: "portable",
+                  arch: [
+                    "x64",
+                    "ia32"
+                  ]
+                },
             {
               target: "zip",
               arch: [
@@ -31,6 +38,11 @@ module.exports = defineConfig({
             }
           ]
         },
+            linux: {
+              target: [
+                "AppImage"
+              ]
+            },
         nsis: {
           oneClick: false,
           allowToChangeInstallationDirectory: true,
