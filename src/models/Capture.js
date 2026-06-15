@@ -1,5 +1,4 @@
 const { desktopCapturer } = require('electron')
-const sharp = require('sharp')
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 class Capture {
     constructor(screenId) {
@@ -8,7 +7,8 @@ class Capture {
         this.stream = null
         this.screenId = screenId
         this.videoElement = null
-        this.videoFrame = null
+        this.canvas = document.createElement('canvas');
+        this.ctx = this.canvas.getContext('2d', { willReadFrequently: true });
         this.segData = {}
         this.startVideoStream()
         this.segmentDuration = 0
@@ -59,25 +59,16 @@ class Capture {
         this.videoElement.srcObject = this.stream
         this.videoElement.onloadedmetadata = (e) => {
             this.videoElement.play()
+            this.canvas.width = this.videoElement.videoWidth;
+            this.canvas.height = this.videoElement.videoHeight;
             this.refresh()
-            this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
         }
 
     }
-    getVideoFrame() {
-
-        var canvas = document.createElement("canvas");
-        canvas.width = this.videoElement.videoWidth;
-        canvas.height = this.videoElement.videoHeight;
-        var canvasContext = canvas.getContext("2d");
-        canvasContext.drawImage(this.videoElement, 0, 0);
-        window.canvas = canvas
-        return canvas.toDataURL('image/png');
-
-    }
     async getSegmentColors() {
-        // var image = sharp(this.screenPng)
-        this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
+        // Draw the current video frame once to the persistent canvas
+        this.ctx.drawImage(this.videoElement, 0, 0);
+
         let width = this.videoElement.videoWidth
         let height = this.videoElement.videoHeight
 
@@ -130,19 +121,23 @@ class Capture {
         }
     }
     async getCropColors(left, top, width, height) {
-        const crop = await sharp(this.videoFrame).extract({ left, top, width, height }).toBuffer()
-        const { dominant } = await sharp(crop).stats();
-        const { r, g, b } = dominant
-        return this.rgbToHex(r, g, b)
-    }
-    async crop(left, top, width, height) {
-        await this.capture()
-        console.log('cropped')
-        let croppedImage = await sharp(this.screenPng).extract({ left, top, width, height })
-        const croppedImageBuffer = await croppedImage.toBuffer();
-        document.getElementById('cropped-image').src = `data:image/png;base64,${croppedImageBuffer.toString('base64')}`
-        return croppedImage
+        // Optimized: Use native getImageData and simple pixel averaging instead of sharp
+        const data = this.ctx.getImageData(left, top, width, height).data;
+        let r = 0, g = 0, b = 0;
+        const totalPixels = width * height;
 
+        // Sample pixels (skip 4 values: R, G, B, A)
+        for (let i = 0; i < data.length; i += 4) {
+            r += data[i];
+            g += data[i + 1];
+            b += data[i + 2];
+        }
+
+        r = Math.floor(r / totalPixels);
+        g = Math.floor(g / totalPixels);
+        b = Math.floor(b / totalPixels);
+
+        return this.rgbToHex(r, g, b);
     }
     createColorBox() {
         let colorViewer = document.getElementById('color-viewer')
