@@ -1,0 +1,3 @@
+## 2025-05-15 - Native Canvas vs. Native Modules for Video Sync
+**Learning:** Using native modules like 'sharp' for high-frequency image processing in Electron's renderer process introduces significant overhead due to base64/Buffer conversions and context switching between the JS engine and native code. Native Browser APIs like 'CanvasRenderingContext2D.getImageData()' with 'willReadFrequently: true' are significantly faster and more efficient for real-time pixel analysis.
+**Action:** Always prefer native Canvas API for real-time video/frame analysis in Electron renderer processes. Avoid base64 and Buffer conversions in hot paths.
