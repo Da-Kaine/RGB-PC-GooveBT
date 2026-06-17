@@ -23,12 +23,24 @@ module.exports = defineConfig({
               ]
             },
             {
+              target: "portable",
+              arch: [
+                "x64",
+                "ia32"
+              ]
+            },
+            {
               target: "zip",
               arch: [
                 "x64",
                 "ia32"
               ]
             }
+          ]
+        },
+        linux: {
+          target: [
+            "AppImage"
           ]
         },
         nsis: {
