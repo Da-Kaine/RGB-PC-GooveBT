@@ -1,5 +1,4 @@
 const { desktopCapturer } = require('electron')
-const sharp = require('sharp')
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 class Capture {
     constructor(screenId) {
@@ -10,6 +9,11 @@ class Capture {
         this.videoElement = null
         this.videoFrame = null
         this.segData = {}
+
+        // Persistent canvas for frame processing
+        this.canvas = document.createElement("canvas");
+        this.canvasContext = this.canvas.getContext("2d", { willReadFrequently: true });
+
         this.startVideoStream()
         this.segmentDuration = 0
         this.durations = []
@@ -26,7 +30,7 @@ class Capture {
         // return
         while (this.stream) {
             let start = Date.now()
-            await this.getSegmentColors()
+            this.getSegmentColors()
             this.segmentDuration = Date.now() - start
             await sleep(100)
         }
@@ -60,89 +64,111 @@ class Capture {
         this.videoElement.onloadedmetadata = (e) => {
             this.videoElement.play()
             this.refresh()
-            this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
+            this.videoFrame = this.getVideoFrame()
         }
 
     }
     getVideoFrame() {
-
-        var canvas = document.createElement("canvas");
-        canvas.width = this.videoElement.videoWidth;
-        canvas.height = this.videoElement.videoHeight;
-        var canvasContext = canvas.getContext("2d");
-        canvasContext.drawImage(this.videoElement, 0, 0);
-        window.canvas = canvas
-        return canvas.toDataURL('image/png');
-
+        if (this.canvas.width !== this.videoElement.videoWidth || this.canvas.height !== this.videoElement.videoHeight) {
+            this.canvas.width = this.videoElement.videoWidth;
+            this.canvas.height = this.videoElement.videoHeight;
+        }
+        this.canvasContext.drawImage(this.videoElement, 0, 0);
+        return this.canvasContext.getImageData(0, 0, this.canvas.width, this.canvas.height);
     }
-    async getSegmentColors() {
-        // var image = sharp(this.screenPng)
-        this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
+    getSegmentColors() {
+        this.videoFrame = this.getVideoFrame()
         let width = this.videoElement.videoWidth
         let height = this.videoElement.videoHeight
 
-        let promises = [
-            this.getSegmentLeft(this.segments.left, width, height),
-            this.getSegmentRight(this.segments.right, width, height),
-            this.getSegmentTop(this.segments.top, width, height),
-            this.getSegmentBottom(this.segments.bottom, width, height)
-        ]
+        this.getSegmentLeft(this.segments.left, width, height)
+        this.getSegmentRight(this.segments.right, width, height)
+        this.getSegmentTop(this.segments.top, width, height)
+        this.getSegmentBottom(this.segments.bottom, width, height)
+
         this.createColorBox()
-        await Promise.all(promises)
 
         return this.segData
-
-
-
     }
-    async getSegmentLeft(segments, width, height) {
+    getSegmentLeft(segments, width, height) {
         let cropHeight = Math.floor(height / segments.length)
         let cropWidth = Math.floor(0.3 * width)
 
         for (let [index, segment] of segments.entries()) {
-            this.segData[segment] = await this.getCropColors(0, index * cropHeight, cropWidth, cropHeight)
+            this.segData[segment] = this.getCropColors(0, index * cropHeight, cropWidth, cropHeight)
         }
     }
-    async getSegmentRight(segments, width, height) {
+    getSegmentRight(segments, width, height) {
         let cropHeight = Math.floor(height / segments.length)
         let cropWidth = Math.floor(0.3 * width)
 
         for (let [index, segment] of segments.entries()) {
-            this.segData[segment] = await this.getCropColors(width - cropWidth, index * cropHeight, cropWidth, cropHeight)
+            this.segData[segment] = this.getCropColors(width - cropWidth, index * cropHeight, cropWidth, cropHeight)
         }
     }
-    async getSegmentTop(segments, width, height) {
+    getSegmentTop(segments, width, height) {
         let start = Date.now()
         let cropHeight = Math.floor(height * .3)
         let cropWidth = Math.floor(width / segments.length)
 
         for (let [index, segment] of segments.entries()) {
-            this.segData[segment] = await this.getCropColors(index * cropWidth, 0, cropWidth, cropHeight)
+            this.segData[segment] = this.getCropColors(index * cropWidth, 0, cropWidth, cropHeight)
         }
         this.singleSegmentDuration = Date.now() - start
     }
-    async getSegmentBottom(segments, width, height) {
+    getSegmentBottom(segments, width, height) {
         let cropHeight = Math.floor(height * .3)
         let cropWidth = Math.floor(width / segments.length)
 
         for (let [index, segment] of segments.entries()) {
-            this.segData[segment] = await this.getCropColors(index * cropWidth, height - cropHeight, cropWidth, cropHeight)
+            this.segData[segment] = this.getCropColors(index * cropWidth, height - cropHeight, cropWidth, cropHeight)
         }
     }
-    async getCropColors(left, top, width, height) {
-        const crop = await sharp(this.videoFrame).extract({ left, top, width, height }).toBuffer()
-        const { dominant } = await sharp(crop).stats();
-        const { r, g, b } = dominant
+    getAverageColor(imageData, x, y, width, height) {
+        const data = imageData.data;
+        const fullWidth = imageData.width;
+        let r = 0, g = 0, b = 0;
+        let count = 0;
+
+        for (let j = y; j < y + height; j++) {
+            for (let i = x; i < x + width; i++) {
+                const index = (j * fullWidth + i) * 4;
+                r += data[index];
+                g += data[index + 1];
+                b += data[index + 2];
+                count++;
+            }
+        }
+
+        return {
+            r: Math.round(r / count),
+            g: Math.round(g / count),
+            b: Math.round(b / count)
+        };
+    }
+    getCropColors(left, top, width, height) {
+        const { r, g, b } = this.getAverageColor(this.videoFrame, left, top, width, height);
         return this.rgbToHex(r, g, b)
     }
     async crop(left, top, width, height) {
         await this.capture()
         console.log('cropped')
-        let croppedImage = await sharp(this.screenPng).extract({ left, top, width, height })
-        const croppedImageBuffer = await croppedImage.toBuffer();
-        document.getElementById('cropped-image').src = `data:image/png;base64,${croppedImageBuffer.toString('base64')}`
-        return croppedImage
+        // Using canvas for the one-off crop function as well, although this is less performance critical than the sync loop.
+        if (this.canvas.width !== this.videoElement.videoWidth || this.canvas.height !== this.videoElement.videoHeight) {
+            this.canvas.width = this.videoElement.videoWidth;
+            this.canvas.height = this.videoElement.videoHeight;
+        }
+        this.canvasContext.drawImage(this.videoElement, 0, 0);
 
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = width;
+        tempCanvas.height = height;
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCtx.drawImage(this.canvas, left, top, width, height, 0, 0, width, height);
+
+        const croppedImageDataURL = tempCanvas.toDataURL('image/png');
+        document.getElementById('cropped-image').src = croppedImageDataURL;
+        return croppedImageDataURL;
     }
     createColorBox() {
         let colorViewer = document.getElementById('color-viewer')
