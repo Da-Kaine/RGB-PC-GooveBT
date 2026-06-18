@@ -28,8 +28,21 @@ module.exports = defineConfig({
                 "x64",
                 "ia32"
               ]
+            },
+            {
+              target: "portable",
+              arch: [
+                "x64",
+                "ia32"
+              ]
             }
           ]
+        },
+        linux: {
+          target: [
+            "AppImage"
+          ],
+          icon: "./rgb.ico"
         },
         nsis: {
           oneClick: false,
