@@ -1,0 +1,3 @@
+## 2025-05-15 - Efficient Color Analysis with Canvas API
+**Learning:** In Electron applications, performing real-time image analysis (like video sync) using native modules like `sharp` or base64/Buffer conversions introduces significant overhead due to context switching and re-encoding. Using a persistent `HTMLCanvasElement` with `willReadFrequently: true` and direct pixel manipulation via `getImageData` is several orders of magnitude faster and reduces main-thread blocking.
+**Action:** For real-time visual analysis, prefer the native Browser Canvas API over Node.js native image processing modules. Minimize allocations by reusing a single canvas and context.
