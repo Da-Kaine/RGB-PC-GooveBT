@@ -43,6 +43,9 @@ module.exports = defineConfig({
             "AppImage"
           ]
         },
+        portable: {
+          artifactName: "${productName}-Portable-${version}.${ext}"
+        },
         nsis: {
           oneClick: false,
           allowToChangeInstallationDirectory: true,
