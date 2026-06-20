@@ -99,35 +99,35 @@ class Capture {
         let cropHeight = Math.floor(height / segments.length)
         let cropWidth = Math.floor(0.3 * width)
 
-        for (let [index, segment] of segments.entries()) {
+        await Promise.all(segments.map(async (segment, index) => {
             this.segData[segment] = await this.getCropColors(0, index * cropHeight, cropWidth, cropHeight)
-        }
+        }))
     }
     async getSegmentRight(segments, width, height) {
         let cropHeight = Math.floor(height / segments.length)
         let cropWidth = Math.floor(0.3 * width)
 
-        for (let [index, segment] of segments.entries()) {
+        await Promise.all(segments.map(async (segment, index) => {
             this.segData[segment] = await this.getCropColors(width - cropWidth, index * cropHeight, cropWidth, cropHeight)
-        }
+        }))
     }
     async getSegmentTop(segments, width, height) {
         let start = Date.now()
         let cropHeight = Math.floor(height * .3)
         let cropWidth = Math.floor(width / segments.length)
 
-        for (let [index, segment] of segments.entries()) {
+        await Promise.all(segments.map(async (segment, index) => {
             this.segData[segment] = await this.getCropColors(index * cropWidth, 0, cropWidth, cropHeight)
-        }
+        }))
         this.singleSegmentDuration = Date.now() - start
     }
     async getSegmentBottom(segments, width, height) {
         let cropHeight = Math.floor(height * .3)
         let cropWidth = Math.floor(width / segments.length)
 
-        for (let [index, segment] of segments.entries()) {
+        await Promise.all(segments.map(async (segment, index) => {
             this.segData[segment] = await this.getCropColors(index * cropWidth, height - cropHeight, cropWidth, cropHeight)
-        }
+        }))
     }
     async getCropColors(left, top, width, height) {
         const crop = await sharp(this.videoFrame).extract({ left, top, width, height }).toBuffer()
