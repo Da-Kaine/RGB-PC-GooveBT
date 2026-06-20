@@ -130,8 +130,7 @@ class Capture {
         }
     }
     async getCropColors(left, top, width, height) {
-        const crop = await sharp(this.videoFrame).extract({ left, top, width, height }).toBuffer()
-        const { dominant } = await sharp(crop).stats();
+        const { dominant } = await sharp(this.videoFrame).extract({ left, top, width, height }).stats();
         const { r, g, b } = dominant
         return this.rgbToHex(r, g, b)
     }
