@@ -157,17 +157,12 @@ class Strip {
     }
     getChecksum(bytes) {
         let numChunks = bytes.length / 2
-        let xor = "00"
+        let xor = 0
         for (let i = 0; i < numChunks; i++) {
-            let chunk = bytes.slice(i * 2, (i + 1) * 2)
-
-            const buf1 = Buffer.from(xor, 'hex');
-            const buf2 = Buffer.from(chunk, 'hex');
-            const bufResult = buf1.map((b, i) => b ^ buf2[i]);
-            xor = bufResult.toString('hex');
-
+            let chunk = parseInt(bytes.slice(i * 2, (i + 1) * 2), 16)
+            xor ^= chunk
         }
-        return xor
+        return xor.toString(16).padStart(2, '0')
     }
     async runStringCommand(string) {
         await this.characteristic.writeValueWithoutResponse(commands.convert(string));
