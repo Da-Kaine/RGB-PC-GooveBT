@@ -7,6 +7,10 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 const path = require('path')
 const ipcMain = require('electron').ipcMain;
 
+if (process.env.PORTABLE_EXECUTABLE_DIR) {
+  app.setPath('userData', path.join(process.env.PORTABLE_EXECUTABLE_DIR, 'data'));
+}
+
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
