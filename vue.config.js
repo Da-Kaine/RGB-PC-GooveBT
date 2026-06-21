@@ -40,8 +40,12 @@ module.exports = defineConfig({
         },
         linux: {
           target: [
-            "AppImage"
+            "AppImage",
+            "portable"
           ]
+        },
+        portable: {
+          artifactName: "${productName}-Portable-${version}.${ext}"
         },
         nsis: {
           oneClick: false,
