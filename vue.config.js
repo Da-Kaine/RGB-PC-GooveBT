@@ -27,7 +27,8 @@ module.exports = defineConfig({
               arch: [
                 "x64",
                 "ia32"
-              ]
+              ],
+              artifactName: "${productName}-Portable-${version}.${ext}"
             },
             {
               target: "zip",
