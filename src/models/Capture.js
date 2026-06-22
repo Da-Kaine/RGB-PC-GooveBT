@@ -8,7 +8,6 @@ class Capture {
         this.stream = null
         this.screenId = screenId
         this.videoElement = null
-        this.videoFrame = null
         this.segData = {}
         this.startVideoStream()
         this.segmentDuration = 0
@@ -20,6 +19,9 @@ class Capture {
             top: [1, 2, 3, 4].reverse(),
             bottom: [9, 10, 11],
         }
+        // Use a persistent canvas for performance
+        this.canvas = document.createElement('canvas')
+        this.canvasContext = this.canvas.getContext('2d', { willReadFrequently: true })
         //time delay to calculate segment colors
     }
     async refresh() {
@@ -60,26 +62,25 @@ class Capture {
         this.videoElement.onloadedmetadata = (e) => {
             this.videoElement.play()
             this.refresh()
-            this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
         }
 
     }
     getVideoFrame() {
-
-        var canvas = document.createElement("canvas");
-        canvas.width = this.videoElement.videoWidth;
-        canvas.height = this.videoElement.videoHeight;
-        var canvasContext = canvas.getContext("2d");
-        canvasContext.drawImage(this.videoElement, 0, 0);
-        window.canvas = canvas
-        return canvas.toDataURL('image/png');
-
+        this.canvas.width = this.videoElement.videoWidth;
+        this.canvas.height = this.videoElement.videoHeight;
+        this.canvasContext.drawImage(this.videoElement, 0, 0);
+        window.canvas = this.canvas
+        return this.canvas.toDataURL('image/png');
     }
+
     async getSegmentColors() {
-        // var image = sharp(this.screenPng)
-        this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
         let width = this.videoElement.videoWidth
         let height = this.videoElement.videoHeight
+
+        // Update canvas with current video frame once per sync cycle
+        this.canvas.width = width
+        this.canvas.height = height
+        this.canvasContext.drawImage(this.videoElement, 0, 0)
 
         let promises = [
             this.getSegmentLeft(this.segments.left, width, height),
@@ -91,9 +92,6 @@ class Capture {
         await Promise.all(promises)
 
         return this.segData
-
-
-
     }
     async getSegmentLeft(segments, width, height) {
         let cropHeight = Math.floor(height / segments.length)
@@ -130,9 +128,22 @@ class Capture {
         }))
     }
     async getCropColors(left, top, width, height) {
-        const { dominant } = await sharp(this.videoFrame).extract({ left, top, width, height }).stats();
-        const { r, g, b } = dominant
-        return this.rgbToHex(r, g, b)
+        // Optimized: Use getImageData instead of sharp/Buffer for real-time analysis
+        const imageData = this.canvasContext.getImageData(left, top, width, height).data;
+        let r = 0, g = 0, b = 0;
+        const count = imageData.length / 4;
+
+        for (let i = 0; i < imageData.length; i += 4) {
+            r += imageData[i];
+            g += imageData[i + 1];
+            b += imageData[i + 2];
+        }
+
+        return this.rgbToHex(
+            Math.floor(r / count),
+            Math.floor(g / count),
+            Math.floor(b / count)
+        );
     }
     async crop(left, top, width, height) {
         await this.capture()
@@ -145,13 +156,27 @@ class Capture {
     }
     createColorBox() {
         let colorViewer = document.getElementById('color-viewer')
-        colorViewer.innerHTML = ""
-        for (let segment in this.segData) {
+        if (!colorViewer) return
+
+        let segments = Object.keys(this.segData)
+        let boxes = colorViewer.getElementsByClassName('color-box')
+
+        // Reuse existing boxes or create new ones if needed
+        segments.forEach((segment, index) => {
             let color = this.segData[segment]
-            const box = document.createElement("div");
-            box.classList.add('color-box');
+            let box = boxes[index]
+
+            if (!box) {
+                box = document.createElement("div")
+                box.classList.add('color-box')
+                colorViewer.appendChild(box)
+            }
             box.style.backgroundColor = color
-            colorViewer.appendChild(box);
+        })
+
+        // Remove extra boxes if segments decreased
+        while (boxes.length > segments.length) {
+            colorViewer.removeChild(colorViewer.lastChild)
         }
     }
     capture() {
