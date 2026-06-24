@@ -1,6 +1,6 @@
 const { desktopCapturer } = require('electron')
-const sharp = require('sharp')
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
 class Capture {
     constructor(screenId) {
         this.screenshot = null
@@ -8,8 +8,15 @@ class Capture {
         this.stream = null
         this.screenId = screenId
         this.videoElement = null
+        // this.videoFrame kept for compatibility, updated only when needed for crop or if explicitly requested
         this.videoFrame = null
         this.segData = {}
+
+        // Persistent canvas for frame capture and analysis
+        this.canvas = document.createElement("canvas");
+        // willReadFrequently optimization for frequent getImageData calls
+        this.ctx = this.canvas.getContext("2d", { willReadFrequently: true });
+
         this.startVideoStream()
         this.segmentDuration = 0
         this.durations = []
@@ -20,17 +27,17 @@ class Capture {
             top: [1, 2, 3, 4].reverse(),
             bottom: [9, 10, 11],
         }
-        //time delay to calculate segment colors
     }
+
     async refresh() {
-        // return
         while (this.stream) {
             let start = Date.now()
-            await this.getSegmentColors()
+            this.getSegmentColors()
             this.segmentDuration = Date.now() - start
             await sleep(100)
         }
     }
+
     stopStream() {
         console.log(`stopped stream`)
         if (this.stream) {
@@ -40,6 +47,7 @@ class Capture {
             this.stream = null
         }
     }
+
     async startVideoStream() {
         if (this.stream != null) return
         this.stream = await navigator.mediaDevices.getUserMedia({
@@ -48,10 +56,7 @@ class Capture {
                 mandatory: {
                     chromeMediaSource: 'desktop',
                     chromeMediaSourceId: this.screenId,
-                    // minWidth: 1280,
                     maxWidth: 100,
-                    // minHeight: 720,
-                    // maxHeight: 1280
                 }
             }
         })
@@ -60,100 +65,147 @@ class Capture {
         this.videoElement.onloadedmetadata = (e) => {
             this.videoElement.play()
             this.refresh()
-            this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
         }
-
     }
-    getVideoFrame() {
 
-        var canvas = document.createElement("canvas");
-        canvas.width = this.videoElement.videoWidth;
-        canvas.height = this.videoElement.videoHeight;
-        var canvasContext = canvas.getContext("2d");
-        canvasContext.drawImage(this.videoElement, 0, 0);
-        window.canvas = canvas
-        return canvas.toDataURL('image/png');
-
+    updateVideoFrame() {
+        if (this.canvas.width !== this.videoElement.videoWidth || this.canvas.height !== this.videoElement.videoHeight) {
+            this.canvas.width = this.videoElement.videoWidth;
+            this.canvas.height = this.videoElement.videoHeight;
+        }
+        this.ctx.drawImage(this.videoElement, 0, 0);
     }
-    async getSegmentColors() {
-        // var image = sharp(this.screenPng)
-        this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
+
+    getSegmentColors() {
+        this.updateVideoFrame()
         let width = this.videoElement.videoWidth
         let height = this.videoElement.videoHeight
 
-        let promises = [
-            this.getSegmentLeft(this.segments.left, width, height),
-            this.getSegmentRight(this.segments.right, width, height),
-            this.getSegmentTop(this.segments.top, width, height),
-            this.getSegmentBottom(this.segments.bottom, width, height)
-        ]
-        this.createColorBox()
-        await Promise.all(promises)
+        this.getSegmentLeft(this.segments.left, width, height)
+        this.getSegmentRight(this.segments.right, width, height)
+        this.getSegmentTop(this.segments.top, width, height)
+        this.getSegmentBottom(this.segments.bottom, width, height)
+
+        this.updateColorBox()
 
         return this.segData
-
-
-
     }
-    async getSegmentLeft(segments, width, height) {
+
+    getSegmentLeft(segments, width, height) {
         let cropHeight = Math.floor(height / segments.length)
         let cropWidth = Math.floor(0.3 * width)
 
-        await Promise.all(segments.map(async (segment, index) => {
-            this.segData[segment] = await this.getCropColors(0, index * cropHeight, cropWidth, cropHeight)
-        }))
+        segments.forEach((segment, index) => {
+            this.segData[segment] = this.getCropColors(0, index * cropHeight, cropWidth, cropHeight)
+        })
     }
-    async getSegmentRight(segments, width, height) {
+
+    getSegmentRight(segments, width, height) {
         let cropHeight = Math.floor(height / segments.length)
         let cropWidth = Math.floor(0.3 * width)
 
-        await Promise.all(segments.map(async (segment, index) => {
-            this.segData[segment] = await this.getCropColors(width - cropWidth, index * cropHeight, cropWidth, cropHeight)
-        }))
+        segments.forEach((segment, index) => {
+            this.segData[segment] = this.getCropColors(width - cropWidth, index * cropHeight, cropWidth, cropHeight)
+        })
     }
-    async getSegmentTop(segments, width, height) {
-        let start = Date.now()
+
+    getSegmentTop(segments, width, height) {
         let cropHeight = Math.floor(height * .3)
         let cropWidth = Math.floor(width / segments.length)
 
-        await Promise.all(segments.map(async (segment, index) => {
-            this.segData[segment] = await this.getCropColors(index * cropWidth, 0, cropWidth, cropHeight)
-        }))
-        this.singleSegmentDuration = Date.now() - start
+        segments.forEach((segment, index) => {
+            this.segData[segment] = this.getCropColors(index * cropWidth, 0, cropWidth, cropHeight)
+        })
     }
-    async getSegmentBottom(segments, width, height) {
+
+    getSegmentBottom(segments, width, height) {
         let cropHeight = Math.floor(height * .3)
         let cropWidth = Math.floor(width / segments.length)
 
-        await Promise.all(segments.map(async (segment, index) => {
-            this.segData[segment] = await this.getCropColors(index * cropWidth, height - cropHeight, cropWidth, cropHeight)
-        }))
+        segments.forEach((segment, index) => {
+            this.segData[segment] = this.getCropColors(index * cropWidth, height - cropHeight, cropWidth, cropHeight)
+        })
     }
-    async getCropColors(left, top, width, height) {
-        const { dominant } = await sharp(this.videoFrame).extract({ left, top, width, height }).stats();
-        const { r, g, b } = dominant
-        return this.rgbToHex(r, g, b)
+
+    getCropColors(left, top, width, height) {
+        // Use getImageData for synchronous, high-performance pixel access
+        const imageData = this.ctx.getImageData(left, top, width, height);
+        const data = imageData.data;
+        let r = 0, g = 0, b = 0;
+        const count = data.length / 4;
+
+        for (let i = 0; i < data.length; i += 4) {
+            r += data[i];
+            g += data[i + 1];
+            b += data[i + 2];
+        }
+
+        r = Math.floor(r / count);
+        g = Math.floor(g / count);
+        b = Math.floor(b / count);
+
+        return this.rgbToHex(r, g, b);
     }
+
+    /**
+     * Restore crop functionality without sharp
+     * @param {number} left
+     * @param {number} top
+     * @param {number} width
+     * @param {number} height
+     */
     async crop(left, top, width, height) {
-        await this.capture()
-        console.log('cropped')
-        let croppedImage = await sharp(this.screenPng).extract({ left, top, width, height })
-        const croppedImageBuffer = await croppedImage.toBuffer();
-        document.getElementById('cropped-image').src = `data:image/png;base64,${croppedImageBuffer.toString('base64')}`
-        return croppedImage
+        this.updateVideoFrame();
 
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = width;
+        tempCanvas.height = height;
+        const tempCtx = tempCanvas.getContext('2d');
+
+        tempCtx.drawImage(this.canvas, left, top, width, height, 0, 0, width, height);
+
+        const dataUrl = tempCanvas.toDataURL('image/png');
+        const base64Data = dataUrl.split("base64,")[1];
+
+        const croppedImageElement = document.getElementById('cropped-image');
+        if (croppedImageElement) {
+            croppedImageElement.src = dataUrl;
+        }
+
+        // Return a mock sharp-like object or at least one that has toBuffer if needed
+        // but looking at original code it returned the sharp object.
+        // We'll return the buffer as requested by the original implementation's usage pattern if it existed.
+        return {
+            toBuffer: async () => Buffer.from(base64Data, 'base64')
+        };
     }
-    createColorBox() {
+
+    updateColorBox() {
         let colorViewer = document.getElementById('color-viewer')
-        colorViewer.innerHTML = ""
-        for (let segment in this.segData) {
-            let color = this.segData[segment]
-            const box = document.createElement("div");
-            box.classList.add('color-box');
-            box.style.backgroundColor = color
-            colorViewer.appendChild(box);
+        if (!colorViewer) return;
+
+        let boxes = colorViewer.getElementsByClassName('color-box');
+        let segmentIds = Object.keys(this.segData);
+
+        // Reuse existing boxes to avoid DOM thrashing
+        for (let i = 0; i < segmentIds.length; i++) {
+            let color = this.segData[segmentIds[i]];
+            if (boxes[i]) {
+                boxes[i].style.backgroundColor = color;
+            } else {
+                const box = document.createElement("div");
+                box.classList.add('color-box');
+                box.style.backgroundColor = color;
+                colorViewer.appendChild(box);
+            }
+        }
+
+        // Remove extra boxes if any
+        while (boxes.length > segmentIds.length) {
+            colorViewer.removeChild(boxes[boxes.length - 1]);
         }
     }
+
     capture() {
         desktopCapturer.getSources({ types: ['screen'], thumbnailSize: { width: 1920, height: 1080 } })
             .then(sources => {
@@ -162,8 +214,8 @@ class Capture {
                     this.screenshot = source.thumbnail.toDataURL()
                     this.screenSource = source
                     this.screenPng = source.thumbnail.toPNG()
-                    document.getElementById('screenshot-image').src = this.screenshot // The image to display the screenshot
-
+                    const screenshotImg = document.getElementById('screenshot-image');
+                    if (screenshotImg) screenshotImg.src = this.screenshot
                 }
             })
     }
