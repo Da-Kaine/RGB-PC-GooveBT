@@ -1,5 +1,4 @@
 const { desktopCapturer } = require('electron')
-const sharp = require('sharp')
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 class Capture {
     constructor(screenId) {
@@ -20,7 +19,10 @@ class Capture {
             top: [1, 2, 3, 4].reverse(),
             bottom: [9, 10, 11],
         }
-        //time delay to calculate segment colors
+        // Optimization: Reuse a persistent canvas for real-time color analysis
+        this.canvas = document.createElement("canvas");
+        // Use willReadFrequently to optimize for frequent getImageData calls
+        this.ctx = this.canvas.getContext("2d", { willReadFrequently: true });
     }
     async refresh() {
         // return
@@ -60,26 +62,19 @@ class Capture {
         this.videoElement.onloadedmetadata = (e) => {
             this.videoElement.play()
             this.refresh()
-            this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
         }
 
     }
-    getVideoFrame() {
-
-        var canvas = document.createElement("canvas");
-        canvas.width = this.videoElement.videoWidth;
-        canvas.height = this.videoElement.videoHeight;
-        var canvasContext = canvas.getContext("2d");
-        canvasContext.drawImage(this.videoElement, 0, 0);
-        window.canvas = canvas
-        return canvas.toDataURL('image/png');
-
-    }
     async getSegmentColors() {
-        // var image = sharp(this.screenPng)
-        this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
         let width = this.videoElement.videoWidth
         let height = this.videoElement.videoHeight
+
+        // Optimization: Draw the video frame once per cycle to the persistent canvas
+        if (this.canvas.width !== width || this.canvas.height !== height) {
+            this.canvas.width = width;
+            this.canvas.height = height;
+        }
+        this.ctx.drawImage(this.videoElement, 0, 0);
 
         let promises = [
             this.getSegmentLeft(this.segments.left, width, height),
@@ -87,71 +82,89 @@ class Capture {
             this.getSegmentTop(this.segments.top, width, height),
             this.getSegmentBottom(this.segments.bottom, width, height)
         ]
-        this.createColorBox()
+
         await Promise.all(promises)
 
+        // Update DOM once after all segments are calculated
+        this.updateColorBox()
+
         return this.segData
-
-
-
     }
     async getSegmentLeft(segments, width, height) {
         let cropHeight = Math.floor(height / segments.length)
         let cropWidth = Math.floor(0.3 * width)
 
-        await Promise.all(segments.map(async (segment, index) => {
-            this.segData[segment] = await this.getCropColors(0, index * cropHeight, cropWidth, cropHeight)
-        }))
+        segments.forEach((segment, index) => {
+            this.segData[segment] = this.getAverageColor(0, index * cropHeight, cropWidth, cropHeight)
+        })
     }
     async getSegmentRight(segments, width, height) {
         let cropHeight = Math.floor(height / segments.length)
         let cropWidth = Math.floor(0.3 * width)
 
-        await Promise.all(segments.map(async (segment, index) => {
-            this.segData[segment] = await this.getCropColors(width - cropWidth, index * cropHeight, cropWidth, cropHeight)
-        }))
+        segments.forEach((segment, index) => {
+            this.segData[segment] = this.getAverageColor(width - cropWidth, index * cropHeight, cropWidth, cropHeight)
+        })
     }
     async getSegmentTop(segments, width, height) {
         let start = Date.now()
         let cropHeight = Math.floor(height * .3)
         let cropWidth = Math.floor(width / segments.length)
 
-        await Promise.all(segments.map(async (segment, index) => {
-            this.segData[segment] = await this.getCropColors(index * cropWidth, 0, cropWidth, cropHeight)
-        }))
+        segments.forEach((segment, index) => {
+            this.segData[segment] = this.getAverageColor(index * cropWidth, 0, cropWidth, cropHeight)
+        })
         this.singleSegmentDuration = Date.now() - start
     }
     async getSegmentBottom(segments, width, height) {
         let cropHeight = Math.floor(height * .3)
         let cropWidth = Math.floor(width / segments.length)
 
-        await Promise.all(segments.map(async (segment, index) => {
-            this.segData[segment] = await this.getCropColors(index * cropWidth, height - cropHeight, cropWidth, cropHeight)
-        }))
-    }
-    async getCropColors(left, top, width, height) {
-        const { dominant } = await sharp(this.videoFrame).extract({ left, top, width, height }).stats();
-        const { r, g, b } = dominant
-        return this.rgbToHex(r, g, b)
+        segments.forEach((segment, index) => {
+            this.segData[segment] = this.getAverageColor(index * cropWidth, height - cropHeight, cropWidth, cropHeight)
+        })
     }
     async crop(left, top, width, height) {
         await this.capture()
         console.log('cropped')
-        let croppedImage = await sharp(this.screenPng).extract({ left, top, width, height })
-        const croppedImageBuffer = await croppedImage.toBuffer();
-        document.getElementById('cropped-image').src = `data:image/png;base64,${croppedImageBuffer.toString('base64')}`
-        return croppedImage
+        // Optimization: Use Canvas API for cropping instead of sharp
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
 
+        const img = new Image();
+        img.src = this.screenshot;
+        await new Promise(resolve => img.onload = resolve);
+
+        ctx.drawImage(img, left, top, width, height, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/png');
+        document.getElementById('cropped-image').src = dataUrl;
+        return { toBuffer: async () => Buffer.from(dataUrl.split(",")[1], 'base64') };
     }
-    createColorBox() {
+    updateColorBox() {
         let colorViewer = document.getElementById('color-viewer')
-        colorViewer.innerHTML = ""
+        if (!colorViewer) return;
+
+        let boxes = colorViewer.getElementsByClassName('color-box');
+        let i = 0;
         for (let segment in this.segData) {
             let color = this.segData[segment]
-            const box = document.createElement("div");
-            box.classList.add('color-box');
+            let box;
+            if (i < boxes.length) {
+                box = boxes[i];
+            } else {
+                box = document.createElement("div");
+                box.classList.add('color-box');
+                colorViewer.appendChild(box);
+            }
             box.style.backgroundColor = color
-            colorViewer.appendChild(box);
+            i++;
+        }
+
+        // Remove extra boxes if segments decreased
+        while (boxes.length > i) {
+            colorViewer.removeChild(boxes[boxes.length - 1]);
         }
     }
     capture() {
@@ -175,6 +188,30 @@ class Capture {
 
     rgbToHex(r, g, b) {
         return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
+    }
+
+    /**
+     * Optimization: Synchronous average color calculation using Canvas API.
+     * This avoids the overhead of image encoding/decoding and external library calls.
+     */
+    getAverageColor(left, top, width, height) {
+        if (width <= 0 || height <= 0) return "#000000";
+
+        const imageData = this.ctx.getImageData(left, top, width, height).data;
+        let r = 0, g = 0, b = 0;
+        const count = imageData.length / 4;
+
+        for (let i = 0; i < imageData.length; i += 4) {
+            r += imageData[i];
+            g += imageData[i + 1];
+            b += imageData[i + 2];
+        }
+
+        return this.rgbToHex(
+            Math.floor(r / count),
+            Math.floor(g / count),
+            Math.floor(b / count)
+        );
     }
 }
 

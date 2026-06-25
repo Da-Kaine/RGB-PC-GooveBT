@@ -156,11 +156,12 @@ class Strip {
 
     }
     getChecksum(bytes) {
-        let numChunks = bytes.length / 2
         let xor = 0
-        for (let i = 0; i < numChunks; i++) {
-            let chunk = parseInt(bytes.slice(i * 2, (i + 1) * 2), 16)
-            xor ^= chunk
+        for (let i = 0; i < bytes.length; i += 2) {
+            // Optimization: Use parseInt on 2-char substring without slice if possible,
+            // but slice is necessary for parseInt(str, 16).
+            // However, iterating i += 2 is cleaner than numChunks.
+            xor ^= parseInt(bytes.substring(i, i + 2), 16)
         }
         return xor.toString(16).padStart(2, '0')
     }
@@ -214,21 +215,16 @@ let commands = {
 
 
     get(command) {
-        let hex = this[command];
-
-        return new Uint8Array(
-            hex.match(/[\da-f]{2}/gi).map(function (h) {
-                return parseInt(h, 16);
-            })
-        );
-
+        return this.convert(this[command]);
     },
     convert(string) {
-        return new Uint8Array(
-            string.match(/[\da-f]{2}/gi).map(function (h) {
-                return parseInt(h, 16);
-            })
-        );
+        // Optimization: Single loop to populate Uint8Array, avoiding match() and map()
+        const size = string.length / 2;
+        const res = new Uint8Array(size);
+        for (let i = 0, j = 0; i < string.length; i += 2, j++) {
+            res[j] = parseInt(string.substring(i, i + 2), 16);
+        }
+        return res;
     }
 
 }
