@@ -156,6 +156,7 @@ class Strip {
 
     }
     getChecksum(bytes) {
+        // Performance Optimization: Numeric parsing and XOR instead of Buffer/mapping
         let numChunks = bytes.length / 2
         let xor = 0
         for (let i = 0; i < numChunks; i++) {
@@ -214,21 +215,17 @@ let commands = {
 
 
     get(command) {
-        let hex = this[command];
-
-        return new Uint8Array(
-            hex.match(/[\da-f]{2}/gi).map(function (h) {
-                return parseInt(h, 16);
-            })
-        );
-
+        return this.convert(this[command]);
     },
-    convert(string) {
-        return new Uint8Array(
-            string.match(/[\da-f]{2}/gi).map(function (h) {
-                return parseInt(h, 16);
-            })
-        );
+    convert(hex) {
+        // Performance Optimization: Direct loop with parseInt instead of regex match + map
+        // Reduces allocations and CPU overhead during frequent Bluetooth commands.
+        const len = hex.length / 2;
+        const result = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            result[i] = parseInt(hex.substring(i * 2, i * 2 + 2), 16);
+        }
+        return result;
     }
 
 }
