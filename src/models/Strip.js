@@ -214,21 +214,19 @@ let commands = {
 
 
     get(command) {
-        let hex = this[command];
-
-        return new Uint8Array(
-            hex.match(/[\da-f]{2}/gi).map(function (h) {
-                return parseInt(h, 16);
-            })
-        );
-
+        return this.convert(this[command]);
     },
+    /**
+     * Optimized hex string to Uint8Array conversion.
+     * Replaces regex match and map with a single loop and parseInt to reduce allocations.
+     */
     convert(string) {
-        return new Uint8Array(
-            string.match(/[\da-f]{2}/gi).map(function (h) {
-                return parseInt(h, 16);
-            })
-        );
+        const length = string.length / 2;
+        const res = new Uint8Array(length);
+        for (let i = 0; i < length; i++) {
+            res[i] = parseInt(string.substring(i * 2, i * 2 + 2), 16);
+        }
+        return res;
     }
 
 }
