@@ -16,21 +16,7 @@ module.exports = defineConfig({
           icon: "./rgb.ico",
           target: [
             {
-              target: "nsis",
-              arch: [
-                "x64",
-                "ia32"
-              ]
-            },
-            {
               target: "portable",
-              arch: [
-                "x64",
-                "ia32"
-              ]
-            },
-            {
-              target: "zip",
               arch: [
                 "x64",
                 "ia32"
@@ -38,6 +24,7 @@ module.exports = defineConfig({
             }
           ]
         },
+        artifactName: "${productName}-Portable-${version}.${ext}",
         linux: {
           target: [
             "AppImage"
