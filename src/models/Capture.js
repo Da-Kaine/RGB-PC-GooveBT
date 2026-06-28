@@ -10,6 +10,9 @@ class Capture {
         this.videoElement = null
         this.videoFrame = null
         this.segData = {}
+        // Use a persistent canvas to avoid re-allocation and use willReadFrequently for better getImageData performance
+        this.canvas = document.createElement("canvas");
+        this.ctx = this.canvas.getContext("2d", { willReadFrequently: true });
         this.startVideoStream()
         this.segmentDuration = 0
         this.durations = []
@@ -26,6 +29,16 @@ class Capture {
         // return
         while (this.stream) {
             let start = Date.now()
+            // Draw current video frame to persistent canvas
+            if (this.canvas.width !== this.videoElement.videoWidth || this.canvas.height !== this.videoElement.videoHeight) {
+                this.canvas.width = this.videoElement.videoWidth;
+                this.canvas.height = this.videoElement.videoHeight;
+            }
+            this.ctx.drawImage(this.videoElement, 0, 0);
+
+            // Update videoFrame for API compatibility
+            this.videoFrame = Buffer.from(this.canvas.toDataURL('image/png').split("base64,")[1], "base64");
+
             await this.getSegmentColors()
             this.segmentDuration = Date.now() - start
             await sleep(100)
@@ -60,24 +73,20 @@ class Capture {
         this.videoElement.onloadedmetadata = (e) => {
             this.videoElement.play()
             this.refresh()
-            this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
         }
 
     }
     getVideoFrame() {
-
-        var canvas = document.createElement("canvas");
-        canvas.width = this.videoElement.videoWidth;
-        canvas.height = this.videoElement.videoHeight;
-        var canvasContext = canvas.getContext("2d");
-        canvasContext.drawImage(this.videoElement, 0, 0);
-        window.canvas = canvas
-        return canvas.toDataURL('image/png');
-
+        // Reuse persistent canvas instead of creating new ones
+        if (this.canvas.width !== this.videoElement.videoWidth || this.canvas.height !== this.videoElement.videoHeight) {
+            this.canvas.width = this.videoElement.videoWidth;
+            this.canvas.height = this.videoElement.videoHeight;
+        }
+        this.ctx.drawImage(this.videoElement, 0, 0);
+        window.canvas = this.canvas
+        return this.canvas.toDataURL('image/png');
     }
     async getSegmentColors() {
-        // var image = sharp(this.screenPng)
-        this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
         let width = this.videoElement.videoWidth
         let height = this.videoElement.videoHeight
 
@@ -87,13 +96,10 @@ class Capture {
             this.getSegmentTop(this.segments.top, width, height),
             this.getSegmentBottom(this.segments.bottom, width, height)
         ]
-        this.createColorBox()
+        this.updateColorBox()
         await Promise.all(promises)
 
         return this.segData
-
-
-
     }
     async getSegmentLeft(segments, width, height) {
         let cropHeight = Math.floor(height / segments.length)
@@ -130,28 +136,54 @@ class Capture {
         }))
     }
     async getCropColors(left, top, width, height) {
-        const { dominant } = await sharp(this.videoFrame).extract({ left, top, width, height }).stats();
-        const { r, g, b } = dominant
+        // Optimized: use getImageData and manual average to avoid sharp/buffer overhead
+        const imageData = this.ctx.getImageData(left, top, width, height);
+        const data = imageData.data;
+        let r = 0, g = 0, b = 0;
+        const totalPixels = width * height;
+
+        for (let i = 0; i < data.length; i += 4) {
+            r += data[i];
+            g += data[i + 1];
+            b += data[i + 2];
+        }
+
+        r = Math.floor(r / totalPixels);
+        g = Math.floor(g / totalPixels);
+        b = Math.floor(b / totalPixels);
+
         return this.rgbToHex(r, g, b)
     }
     async crop(left, top, width, height) {
+        // Maintain API compatibility by returning a sharp instance
         await this.capture()
         console.log('cropped')
         let croppedImage = await sharp(this.screenPng).extract({ left, top, width, height })
         const croppedImageBuffer = await croppedImage.toBuffer();
         document.getElementById('cropped-image').src = `data:image/png;base64,${croppedImageBuffer.toString('base64')}`
         return croppedImage
-
     }
-    createColorBox() {
+    updateColorBox() {
         let colorViewer = document.getElementById('color-viewer')
-        colorViewer.innerHTML = ""
+        // Optimization: reuse existing boxes to minimize DOM churn
+        let boxes = colorViewer.getElementsByClassName('color-box');
+        let segmentIndex = 0;
         for (let segment in this.segData) {
             let color = this.segData[segment]
-            const box = document.createElement("div");
-            box.classList.add('color-box');
+            let box;
+            if (segmentIndex < boxes.length) {
+                box = boxes[segmentIndex];
+            } else {
+                box = document.createElement("div");
+                box.classList.add('color-box');
+                colorViewer.appendChild(box);
+            }
             box.style.backgroundColor = color
-            colorViewer.appendChild(box);
+            segmentIndex++;
+        }
+        // Remove extra boxes if any
+        while (colorViewer.children.length > segmentIndex) {
+            colorViewer.removeChild(colorViewer.lastChild);
         }
     }
     capture() {
