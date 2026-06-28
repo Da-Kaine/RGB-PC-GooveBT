@@ -1,11 +1,17 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
+import path from 'path'
 const isDevelopment = process.env.NODE_ENV !== 'production'
-const path = require('path')
-const ipcMain = require('electron').ipcMain;
+
+// Redirect userData to local data folder if running as portable
+const portableDir = process.env.PORTABLE_EXECUTABLE_DIR || (process.env.APPIMAGE ? path.dirname(process.env.APPIMAGE) : null);
+if (portableDir) {
+  const userDataPath = path.join(portableDir, 'data')
+  app.setPath('userData', userDataPath)
+}
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
