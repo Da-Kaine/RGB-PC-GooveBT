@@ -8,7 +8,6 @@ class Capture {
         this.stream = null
         this.screenId = screenId
         this.videoElement = null
-        this.videoFrame = null
         this.segData = {}
         this.startVideoStream()
         this.segmentDuration = 0
@@ -20,7 +19,10 @@ class Capture {
             top: [1, 2, 3, 4].reverse(),
             bottom: [9, 10, 11],
         }
-        //time delay to calculate segment colors
+
+        this.canvas = document.createElement("canvas")
+        // willReadFrequently: true optimizes for getImageData calls
+        this.ctx = this.canvas.getContext("2d", { willReadFrequently: true })
     }
     async refresh() {
         // return
@@ -60,24 +62,20 @@ class Capture {
         this.videoElement.onloadedmetadata = (e) => {
             this.videoElement.play()
             this.refresh()
-            this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
+            this.updateFrame()
         }
 
     }
-    getVideoFrame() {
-
-        var canvas = document.createElement("canvas");
-        canvas.width = this.videoElement.videoWidth;
-        canvas.height = this.videoElement.videoHeight;
-        var canvasContext = canvas.getContext("2d");
-        canvasContext.drawImage(this.videoElement, 0, 0);
-        window.canvas = canvas
-        return canvas.toDataURL('image/png');
-
+    updateFrame() {
+        if (this.canvas.width !== this.videoElement.videoWidth || this.canvas.height !== this.videoElement.videoHeight) {
+            this.canvas.width = this.videoElement.videoWidth;
+            this.canvas.height = this.videoElement.videoHeight;
+        }
+        this.ctx.drawImage(this.videoElement, 0, 0);
     }
     async getSegmentColors() {
         // var image = sharp(this.screenPng)
-        this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
+        this.updateFrame()
         let width = this.videoElement.videoWidth
         let height = this.videoElement.videoHeight
 
@@ -87,8 +85,8 @@ class Capture {
             this.getSegmentTop(this.segments.top, width, height),
             this.getSegmentBottom(this.segments.bottom, width, height)
         ]
-        this.createColorBox()
         await Promise.all(promises)
+        this.updateColorBox()
 
         return this.segData
 
@@ -130,8 +128,22 @@ class Capture {
         }))
     }
     async getCropColors(left, top, width, height) {
-        const { dominant } = await sharp(this.videoFrame).extract({ left, top, width, height }).stats();
-        const { r, g, b } = dominant
+        // Use getImageData for fast pixel access
+        const imgData = this.ctx.getImageData(left, top, width, height).data;
+        let r = 0, g = 0, b = 0;
+        const count = imgData.length / 4;
+
+        // Simple averaging is much faster than sharp's dominant color analysis for this use case
+        for (let i = 0; i < imgData.length; i += 4) {
+            r += imgData[i];
+            g += imgData[i + 1];
+            b += imgData[i + 2];
+        }
+
+        r = Math.floor(r / count);
+        g = Math.floor(g / count);
+        b = Math.floor(b / count);
+
         return this.rgbToHex(r, g, b)
     }
     async crop(left, top, width, height) {
@@ -143,15 +155,28 @@ class Capture {
         return croppedImage
 
     }
-    createColorBox() {
+    updateColorBox() {
         let colorViewer = document.getElementById('color-viewer')
-        colorViewer.innerHTML = ""
-        for (let segment in this.segData) {
-            let color = this.segData[segment]
-            const box = document.createElement("div");
-            box.classList.add('color-box');
+        if (!colorViewer) return
+
+        let boxes = colorViewer.getElementsByClassName('color-box')
+        let segmentKeys = Object.keys(this.segData)
+
+        // Reuse existing boxes to avoid DOM churn
+        for (let i = 0; i < segmentKeys.length; i++) {
+            let color = this.segData[segmentKeys[i]]
+            let box = boxes[i]
+            if (!box) {
+                box = document.createElement("div");
+                box.classList.add('color-box');
+                colorViewer.appendChild(box);
+            }
             box.style.backgroundColor = color
-            colorViewer.appendChild(box);
+        }
+
+        // Remove extra boxes if segments decreased
+        while (boxes.length > segmentKeys.length) {
+            colorViewer.removeChild(boxes[boxes.length - 1])
         }
     }
     capture() {
