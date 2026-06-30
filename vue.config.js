@@ -14,23 +14,10 @@ module.exports = defineConfig({
         productName: "RGB-PC",
         win: {
           icon: "./rgb.ico",
+          artifactName: "${productName}-Portable-${version}.${ext}",
           target: [
             {
-              target: "nsis",
-              arch: [
-                "x64",
-                "ia32"
-              ]
-            },
-            {
               target: "portable",
-              arch: [
-                "x64",
-                "ia32"
-              ]
-            },
-            {
-              target: "zip",
               arch: [
                 "x64",
                 "ia32"
@@ -39,14 +26,10 @@ module.exports = defineConfig({
           ]
         },
         linux: {
+          artifactName: "${productName}-Portable-${version}.${ext}",
           target: [
             "AppImage"
           ]
-        },
-        nsis: {
-          oneClick: false,
-          allowToChangeInstallationDirectory: true,
-          installerIcon: "./rgb.ico"
         }
       }
     }
