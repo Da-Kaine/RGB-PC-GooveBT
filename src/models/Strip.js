@@ -214,21 +214,15 @@ let commands = {
 
 
     get(command) {
-        let hex = this[command];
-
-        return new Uint8Array(
-            hex.match(/[\da-f]{2}/gi).map(function (h) {
-                return parseInt(h, 16);
-            })
-        );
-
+        return this.convert(this[command]);
     },
     convert(string) {
-        return new Uint8Array(
-            string.match(/[\da-f]{2}/gi).map(function (h) {
-                return parseInt(h, 16);
-            })
-        );
+        const len = string.length / 2;
+        const res = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            res[i] = parseInt(string.slice(i * 2, i * 2 + 2), 16);
+        }
+        return res;
     }
 
 }

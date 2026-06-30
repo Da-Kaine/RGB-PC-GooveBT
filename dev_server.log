@@ -1,0 +1,482 @@
+
+> rgb@1.0.0 serve /app
+> vue-cli-service serve
+
+ INFO  Starting development server...
+[3%] setup (watch run)
+[2K[1A[2K[G[3%] setup (watch run vue-loader-plugin)
+[2K[1A[2K[G[3%] setup (watch run ESLintWebpackPlugin_1)
+[2K[1A[2K[G[3%] setup (watch run webpack-dev-middleware)
+[2K[1A[2K[G[3%] setup (watch run)
+[2K[1A[2K[G[4%] setup (normal module factory)
+[2K[1A[2K[G[4%] setup (normal module factory CaseSensitivePathsPlugin)
+[2K[1A[2K[G[4%] setup (normal module factory)
+[2K[1A[2K[G[5%] setup (context module factory)
+[2K[1A[2K[G[6%] setup (before compile)
+[2K[1A[2K[G[6%] setup (before compile ProgressPlugin)
+[2K[1A[2K[G[6%] setup (before compile)
+[2K[1A[2K[G[7%] setup (compile)
+[2K[1A[2K[G[7%] setup (compile ExternalsPlugin)
+[2K[1A[2K[G[7%] setup (compile)
+[2K[1A[2K[G[8%] setup (compilation)
+[2K[1A[2K[G[8%] setup (compilation HtmlWebpackPlugin)
+[2K[1A[2K[G[8%] setup (compilation CopyPlugin)
+[2K[1A[2K[G[8%] setup (compilation ArrayPushCallbackChunkFormatPlugin)
+[2K[1A[2K[G[8%] setup (compilation JsonpChunkLoadingPlugin)
+[2K[1A[2K[G[8%] setup (compilation StartupChunkDependenciesPlugin)
+[2K[1A[2K[G[8%] setup (compilation ImportScriptsChunkLoadingPlugin)
+[2K[1A[2K[G[8%] setup (compilation WorkerPlugin)
+[2K[1A[2K[G[8%] setup (compilation SplitChunksPlugin)
+[2K[1A[2K[G[8%] setup (compilation ResolverCachePlugin)
+[2K[1A[2K[G[8%] setup (compilation)
+[2K[1A[2K[G[9%] setup (compilation)
+[2K[1A[2K[G[9%] setup (compilation vue-loader-plugin)
+[2K[1A[2K[G[9%] setup (compilation DefinePlugin)
+[2K[1A[2K[G[9%] setup (compilation ProgressPlugin)
+[2K[1A[2K[G[9%] setup (compilation EntryPlugin)
+[2K[1A[2K[G[9%] setup (compilation ExternalsPlugin)
+[2K[1A[2K[G[9%] setup (compilation ChunkPrefetchPreloadPlugin)
+[2K[1A[2K[G[9%] setup (compilation ModuleInfoHeaderPlugin)
+[2K[1A[2K[G[9%] setup (compilation EvalSourceMapDevToolPlugin)
+[2K[1A[2K[G[9%] setup (compilation JavascriptModulesPlugin)
+[2K[1A[2K[G[9%] setup (compilation JsonModulesPlugin)
+[2K[1A[2K[G[9%] setup (compilation AssetModulesPlugin)
+[2K[1A[2K[G[9%] setup (compilation EntryPlugin)
+[2K[1A[2K[G[9%] setup (compilation RuntimePlugin)
+[2K[1A[2K[G[9%] setup (compilation InferAsyncModulesPlugin)
+[2K[1A[2K[G[9%] setup (compilation DataUriPlugin)
+[2K[1A[2K[G[9%] setup (compilation FileUriPlugin)
+[2K[1A[2K[G[9%] setup (compilation CompatibilityPlugin)
+[2K[1A[2K[G[9%] setup (compilation HarmonyModulesPlugin)
+[2K[1A[2K[G[9%] setup (compilation AMDPlugin)
+[2K[1A[2K[G[9%] setup (compilation RequireJsStuffPlugin)
+[2K[1A[2K[G[9%] setup (compilation CommonJsPlugin)
+[2K[1A[2K[G[9%] setup (compilation LoaderPlugin)
+[2K[1A[2K[G[9%] setup (compilation NodeStuffPlugin)
+[2K[1A[2K[G[9%] setup (compilation APIPlugin)
+[2K[1A[2K[G[9%] setup (compilation ExportsInfoApiPlugin)
+[2K[1A[2K[G[9%] setup (compilation WebpackIsIncludedPlugin)
+[2K[1A[2K[G[9%] setup (compilation ConstPlugin)
+[2K[1A[2K[G[9%] setup (compilation UseStrictPlugin)
+[2K[1A[2K[G[9%] setup (compilation RequireIncludePlugin)
+[2K[1A[2K[G[9%] setup (compilation RequireEnsurePlugin)
+[2K[1A[2K[G[9%] setup (compilation RequireContextPlugin)
+[2K[1A[2K[G[9%] setup (compilation ImportPlugin)
+[2K[1A[2K[G[9%] setup (compilation ImportMetaContextPlugin)
+[2K[1A[2K[G[9%] setup (compilation SystemPlugin)
+[2K[1A[2K[G[9%] setup (compilation ImportMetaPlugin)
+[2K[1A[2K[G[9%] setup (compilation URLPlugin)
+[2K[1A[2K[G[9%] setup (compilation DefaultStatsFactoryPlugin)
+[2K[1A[2K[G[9%] setup (compilation DefaultStatsPresetPlugin)
+[2K[1A[2K[G[9%] setup (compilation DefaultStatsPrinterPlugin)
+[2K[1A[2K[G[9%] setup (compilation JavascriptMetaInfoPlugin)
+[2K[1A[2K[G[9%] setup (compilation EnsureChunkConditionsPlugin)
+[2K[1A[2K[G[9%] setup (compilation RemoveEmptyChunksPlugin)
+[2K[1A[2K[G[9%] setup (compilation MergeDuplicateChunksPlugin)
+[2K[1A[2K[G[9%] setup (compilation SideEffectsFlagPlugin)
+[2K[1A[2K[G[9%] setup (compilation FlagDependencyExportsPlugin)
+[2K[1A[2K[G[9%] setup (compilation ConstExportsPlugin)
+[2K[1A[2K[G[9%] setup (compilation NamedModuleIdsPlugin)
+[2K[1A[2K[G[9%] setup (compilation NamedChunkIdsPlugin)
+[2K[1A[2K[G[9%] setup (compilation DefinePlugin)
+[2K[1A[2K[G[9%] setup (compilation TemplatedPathPlugin)
+[2K[1A[2K[G[9%] setup (compilation RecordIdsPlugin)
+[2K[1A[2K[G[9%] setup (compilation WarnCaseSensitiveModulesPlugin)
+[2K[1A[2K[G[9%] setup (compilation EntryPlugin)
+[2K[1A[2K[G[9%] setup (compilation ProvidePlugin)
+[2K[1A[2K[G[9%] setup (compilation HotModuleReplacementPlugin)
+[2K[1A[2K[G[9%] setup (compilation ProgressPlugin)
+[2K[1A[2K[G[9%] setup (compilation ESLintWebpackPlugin_1)
+[2K[1A[2K[G[9%] setup (compilation)
+[2K[1A[2K[G[10%] building
+[2K[1A[2K[G[10%] building (0/0 modules)
+[2K[1A[2K[G[10%] building (import loader babel-loader/lib/index.js)
+[2K[1A[2K[G[10%] building (0/1 modules)
+[2K[1A[2K[G[10%] building (0/6 modules)
+[2K[1A[2K[G[24%] building (3/9 modules)
+[2K[1A[2K[G[24%] building (import loader vue-loader/dist/index.js)
+[2K[1A[2K[G[24%] building (3/16 modules)
+[2K[1A[2K[G[24%] building (import loader vue-loader/dist/pitcher.js)
+[2K[1A[2K[G[24%] building (5/19 modules)
+[2K[1A[2K[G[24%] building (import loader vue-loader/dist/templateLoader.js)
+[2K[1A[2K[G[24%] building (5/19 modules)
+[2K[1A[2K[G[24%] building (import loader vue-style-loader/index.js)
+[2K[1A[2K[G[24%] building (import loader css-loader/dist/cjs.js)
+[2K[1A[2K[G[24%] building (import loader postcss-loader/dist/cjs.js)
+[2K[1A[2K[G[24%] building (7/30 modules)
+[2K[1A[2K[G[24%] building (import loader vue-loader/dist/stylePostLoader.js)
+[2K[1A[2K[G[24%] building (7/35 modules)
+[2K[1A[2K[G[24%] building (8/43 modules)
+[2K[1A[2K[G[24%] building (19/115 modules)
+[2K[1A[2K[G[38%] building (38/177 modules)
+[2K[1A[2K[G[38%] building (94/218 modules)
+[2K[1A[2K[G[38%] building (127/238 modules)
+[2K[1A[2K[G[51%] building (191/261 modules)
+[2K[1A[2K[G[51%] building (268/369 modules)
+[2K[1A[2K[G[51%] building (339/394 modules)
+[2K[1A[2K[G[51%] building (390/426 modules)
+[2K[1A[2K[G[65%] building (443/443 modules)
+[2K[1A[2K[G[65%] building
+[2K[1A[2K[G[69%] building (finish)
+[2K[1A[2K[G[70%] sealing (finish module graph)
+[2K[1A[2K[G[70%] sealing (finish module graph ResolverCachePlugin)
+[2K[1A[2K[G[70%] sealing (finish module graph InferAsyncModulesPlugin)
+[2K[1A[2K[G[70%] sealing (finish module graph FlagDependencyExportsPlugin)
+[2K[1A[2K[G[70%] sealing (finish module graph ESLintWebpackPlugin_1)
+[2K[1A[2K[G[70%] sealing (finish module graph)
+[2K[1A[2K[G[71%] sealing (plugins)
+[2K[1A[2K[G[71%] sealing (plugins WarnCaseSensitiveModulesPlugin)
+[2K[1A[2K[G[71%] sealing (plugins)
+[2K[1A[2K[G[71%] sealing (dependencies optimization)
+[2K[1A[2K[G[71%] sealing (dependencies optimization SideEffectsFlagPlugin)
+[2K[1A[2K[G[71%] sealing (dependencies optimization)
+[2K[1A[2K[G[72%] sealing (after dependencies optimization)
+[2K[1A[2K[G[73%] sealing (chunk graph)
+[2K[1A[2K[G[73%] sealing (after chunk graph)
+[2K[1A[2K[G[74%] sealing (optimizing)
+[2K[1A[2K[G[74%] sealing (module optimization)
+[2K[1A[2K[G[75%] sealing (after module optimization)
+[2K[1A[2K[G[76%] sealing (chunk optimization)
+[2K[1A[2K[G[76%] sealing (chunk optimization EnsureChunkConditionsPlugin)
+[2K[1A[2K[G[76%] sealing (chunk optimization RemoveEmptyChunksPlugin)
+[2K[1A[2K[G[76%] sealing (chunk optimization MergeDuplicateChunksPlugin)
+[2K[1A[2K[G[76%] sealing (chunk optimization SplitChunksPlugin)
+[2K[1A[2K[G[76%] sealing (chunk optimization RemoveEmptyChunksPlugin)
+[2K[1A[2K[G[76%] sealing (chunk optimization)
+[2K[1A[2K[G[76%] sealing (after chunk optimization)
+[2K[1A[2K[G[77%] sealing (module and chunk tree optimization)
+[2K[1A[2K[G[77%] sealing (module and chunk tree optimization PersistentChildCompilerSinglet
+onPlugin)
+[2K[1A[2K[1A[2K[G[77%] sealing (module and chunk tree optimization)
+[2K[1A[2K[G[78%] sealing (after module and chunk tree optimization)
+[2K[1A[2K[G[78%] sealing (chunk modules optimization)
+[2K[1A[2K[G[79%] sealing (after chunk modules optimization)
+[2K[1A[2K[G[80%] sealing (module reviving)
+[2K[1A[2K[G[80%] sealing (module reviving RecordIdsPlugin)
+[2K[1A[2K[G[80%] sealing (module reviving)
+[2K[1A[2K[G[80%] sealing (before module ids)
+[2K[1A[2K[G[81%] sealing (module ids)
+[2K[1A[2K[G[81%] sealing (module ids NamedModuleIdsPlugin)
+[2K[1A[2K[G[81%] sealing (module ids)
+[2K[1A[2K[G[82%] sealing (module id optimization)
+[2K[1A[2K[G[82%] sealing (module id optimization)
+[2K[1A[2K[G[83%] sealing (chunk reviving)
+[2K[1A[2K[G[83%] sealing (chunk reviving RecordIdsPlugin)
+[2K[1A[2K[G[83%] sealing (chunk reviving)
+[2K[1A[2K[G[83%] sealing (before chunk ids)
+[2K[1A[2K[G[84%] sealing (chunk ids)
+[2K[1A[2K[G[84%] sealing (chunk ids NamedChunkIdsPlugin)
+[2K[1A[2K[G[84%] sealing (chunk ids)
+[2K[1A[2K[G[85%] sealing (chunk id optimization)
+[2K[1A[2K[G[85%] sealing (after chunk id optimization)
+[2K[1A[2K[G[86%] sealing (record modules)
+[2K[1A[2K[G[86%] sealing (record modules RecordIdsPlugin)
+[2K[1A[2K[G[86%] sealing (record modules)
+[2K[1A[2K[G[87%] sealing (record chunks)
+[2K[1A[2K[G[87%] sealing (record chunks RecordIdsPlugin)
+[2K[1A[2K[G[87%] sealing (record chunks)
+[2K[1A[2K[G[87%] sealing (module hashing)
+[2K[1A[2K[G[88%] sealing (code generation)
+[2K[1A[2K[G[89%] sealing (runtime requirements)
+[2K[1A[2K[G[89%] sealing (hashing)
+[2K[1A[2K[G[90%] sealing (after hashing)
+[2K[1A[2K[G[91%] sealing (record hash)
+[2K[1A[2K[G[91%] sealing (module assets processing)
+[2K[1A[2K[G[92%] sealing (chunk assets processing)
+[2K[1A[2K[G[92%] sealing (asset processing)
+[2K[1A[2K[G[92%] sealing (asset processing copy-webpack-plugin)
+[2K[1A[2K[G[92%] sealing (asset processing HotModuleReplacementPlugin)
+[2K[1A[2K[G[92%] sealing (asset processing ESLintWebpackPlugin_1)
+[2K[1A[2K[G[92%] sealing (asset processing PersistentChildCompilerSingletonPlugin)
+[2K[1A[2K[G[92%] sealing (asset processing HtmlWebpackPlugin)
+[2K[1A[2K[G[92%] sealing (asset processing)
+[2K[1A[2K[G[93%] sealing (after asset optimization)
+[2K[1A[2K[G[94%] sealing (recording)
+[2K[1A[2K[G[94%] sealing (recording HotModuleReplacementPlugin)
+[2K[1A[2K[G[94%] sealing (recording)
+[2K[1A[2K[G[94%] sealing (after seal)
+[2K[1A[2K[G[95%] emitting (emit)
+[2K[1A[2K[G[98%] emitting (after emit)
+[2K[1A[2K[GBuild finished at 18:49:43 by 0.000s
+[2K[1A[2K[GBuild finished at 18:49:43 by 0.000s
+[2K[1A[2K[GBuild finished at 18:49:43 by 0.000s
+[2K[1A[2K[G ERROR  Failed to compile with 9 errors6:49:43 PM
+
+ error  in ./node_modules/.pnpm/detect-libc@2.1.2/node_modules/detect-libc/lib/detect-libc.js
+
+Module not found: Error: Can't resolve 'child_process' in '/app/node_modules/.pnpm/detect-libc@2.1.2/node_modules/detect-libc/lib'
+
+ error  in ./node_modules/.pnpm/detect-libc@2.1.2/node_modules/detect-libc/lib/filesystem.js
+
+Module not found: Error: Can't resolve 'fs' in '/app/node_modules/.pnpm/detect-libc@2.1.2/node_modules/detect-libc/lib'
+
+ error  in ./node_modules/.pnpm/electron@13.6.9/node_modules/electron/index.js
+
+Module not found: Error: Can't resolve 'fs' in '/app/node_modules/.pnpm/electron@13.6.9/node_modules/electron'
+
+ error  in ./node_modules/.pnpm/electron@13.6.9/node_modules/electron/index.js
+
+Module not found: Error: Can't resolve 'path' in '/app/node_modules/.pnpm/electron@13.6.9/node_modules/electron'
+
+BREAKING CHANGE: webpack < 5 used to include polyfills for node.js core modules by default.
+This is no longer the case. Verify if you need this module and configure a polyfill for it.
+
+If you want to include a polyfill, you need to:
+	- add a fallback 'resolve.fallback: { "path": require.resolve("path-browserify") }'
+	- install 'path-browserify'
+If you don't want to include a polyfill, you can use an empty module like this:
+	resolve.fallback: { "path": false }
+
+ error  in ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/constructor.js
+
+Module not found: Error: Can't resolve 'stream' in '/app/node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib'
+
+BREAKING CHANGE: webpack < 5 used to include polyfills for node.js core modules by default.
+This is no longer the case. Verify if you need this module and configure a polyfill for it.
+
+If you want to include a polyfill, you need to:
+	- add a fallback 'resolve.fallback: { "stream": require.resolve("stream-browserify") }'
+	- install 'stream-browserify'
+If you don't want to include a polyfill, you can use an empty module like this:
+	resolve.fallback: { "stream": false }
+
+ error  in ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/libvips.js
+
+Module not found: Error: Can't resolve 'fs' in '/app/node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib'
+
+ error  in ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/libvips.js
+
+Module not found: Error: Can't resolve 'os' in '/app/node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib'
+
+BREAKING CHANGE: webpack < 5 used to include polyfills for node.js core modules by default.
+This is no longer the case. Verify if you need this module and configure a polyfill for it.
+
+If you want to include a polyfill, you need to:
+	- add a fallback 'resolve.fallback: { "os": require.resolve("os-browserify/browser") }'
+	- install 'os-browserify'
+If you don't want to include a polyfill, you can use an empty module like this:
+	resolve.fallback: { "os": false }
+
+ error  in ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/libvips.js
+
+Module not found: Error: Can't resolve 'path' in '/app/node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib'
+
+BREAKING CHANGE: webpack < 5 used to include polyfills for node.js core modules by default.
+This is no longer the case. Verify if you need this module and configure a polyfill for it.
+
+If you want to include a polyfill, you need to:
+	- add a fallback 'resolve.fallback: { "path": require.resolve("path-browserify") }'
+	- install 'path-browserify'
+If you don't want to include a polyfill, you can use an empty module like this:
+	resolve.fallback: { "path": false }
+
+ error  in ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/libvips.js
+
+Module not found: Error: Can't resolve 'child_process' in '/app/node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib'
+
+Build finished at 18:49:43 by 0.000s
+[2K[1A[2K[GBuild finished at 18:49:43 by 0.000s
+[2K[1A[2K[GBuild finished at 18:49:43 by 0.000s
+[2K[1A[2K[GBuild finished at 18:49:43 by 0.000s
+[2K[1A[2K[GBuild finished at 18:49:43 by 0.000s
+[2K[1A[2K[GBuild finished at 18:49:43 by 0.000s
+[2K[1A[2K[GBuild finished at 18:49:43 by 0.000s
+[2K[1A[2K[GBuild finished at 18:49:43 by 0.000s
+[2K[1A[2K[GBuild finished at 18:49:43 by 0.000s
+[2K[1A[2K[GERROR in ./node_modules/.pnpm/detect-libc@2.1.2/node_modules/detect-libc/lib/detect-libc.js 9:21-45
+Module not found: Error: Can't resolve 'child_process' in '/app/node_modules/.pnpm/detect-libc@2.1.2/node_modules/detect-libc/lib'
+ @ ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/utility.js 6:19-41
+ @ ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/index.js 11:0-20
+ @ ./src/models/Capture.js 6:14-30
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/components/LightSync.vue?vue&type=script&lang=js 1:0-40 35:21-28
+ @ ./src/components/LightSync.vue?vue&type=script&lang=js 1:0-395 1:0-395 1:396-780 1:396-780
+ @ ./src/components/LightSync.vue 2:0-60 8:49-55 3:0-55 3:0-55
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/App.vue?vue&type=script&lang=js 6:0-51 18:4-13
+ @ ./src/App.vue?vue&type=script&lang=js 1:0-383 1:0-383 1:384-756 1:384-756
+ @ ./src/App.vue 2:0-54 8:49-55 3:0-49 3:0-49
+ @ ./src/main.js 2:0-28 10:10-13
+
+ERROR in ./node_modules/.pnpm/detect-libc@2.1.2/node_modules/detect-libc/lib/filesystem.js 6:11-24
+Module not found: Error: Can't resolve 'fs' in '/app/node_modules/.pnpm/detect-libc@2.1.2/node_modules/detect-libc/lib'
+ @ ./node_modules/.pnpm/detect-libc@2.1.2/node_modules/detect-libc/lib/detect-libc.js 19:4-27
+ @ ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/utility.js 6:19-41
+ @ ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/index.js 11:0-20
+ @ ./src/models/Capture.js 6:14-30
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/components/LightSync.vue?vue&type=script&lang=js 1:0-40 35:21-28
+ @ ./src/components/LightSync.vue?vue&type=script&lang=js 1:0-395 1:0-395 1:396-780 1:396-780
+ @ ./src/components/LightSync.vue 2:0-60 8:49-55 3:0-55 3:0-55
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/App.vue?vue&type=script&lang=js 6:0-51 18:4-13
+ @ ./src/App.vue?vue&type=script&lang=js 1:0-383 1:0-383 1:384-756 1:384-756
+ @ ./src/App.vue 2:0-54 8:49-55 3:0-49 3:0-49
+ @ ./src/main.js 2:0-28 10:10-13
+
+ERROR in ./node_modules/.pnpm/electron@13.6.9/node_modules/electron/index.js 1:11-24
+Module not found: Error: Can't resolve 'fs' in '/app/node_modules/.pnpm/electron@13.6.9/node_modules/electron'
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/App.vue?vue&type=script&lang=js 11:20-51 12:14-39
+ @ ./src/App.vue?vue&type=script&lang=js 1:0-383 1:0-383 1:384-756 1:384-756
+ @ ./src/App.vue 2:0-54 8:49-55 3:0-49 3:0-49
+ @ ./src/main.js 2:0-28 10:10-13
+
+ERROR in ./node_modules/.pnpm/electron@13.6.9/node_modules/electron/index.js 2:13-28
+Module not found: Error: Can't resolve 'path' in '/app/node_modules/.pnpm/electron@13.6.9/node_modules/electron'
+
+BREAKING CHANGE: webpack < 5 used to include polyfills for node.js core modules by default.
+This is no longer the case. Verify if you need this module and configure a polyfill for it.
+
+If you want to include a polyfill, you need to:
+	- add a fallback 'resolve.fallback: { "path": require.resolve("path-browserify") }'
+	- install 'path-browserify'
+If you don't want to include a polyfill, you can use an empty module like this:
+	resolve.fallback: { "path": false }
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/App.vue?vue&type=script&lang=js 11:20-51 12:14-39
+ @ ./src/App.vue?vue&type=script&lang=js 1:0-383 1:0-383 1:384-756 1:384-756
+ @ ./src/App.vue 2:0-54 8:49-55 3:0-49 3:0-49
+ @ ./src/main.js 2:0-28 10:10-13
+
+ERROR in ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/constructor.js 4:15-32
+Module not found: Error: Can't resolve 'stream' in '/app/node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib'
+
+BREAKING CHANGE: webpack < 5 used to include polyfills for node.js core modules by default.
+This is no longer the case. Verify if you need this module and configure a polyfill for it.
+
+If you want to include a polyfill, you need to:
+	- add a fallback 'resolve.fallback: { "stream": require.resolve("stream-browserify") }'
+	- install 'stream-browserify'
+If you don't want to include a polyfill, you can use an empty module like this:
+	resolve.fallback: { "stream": false }
+ @ ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/index.js 3:14-38
+ @ ./src/models/Capture.js 6:14-30
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/components/LightSync.vue?vue&type=script&lang=js 1:0-40 35:21-28
+ @ ./src/components/LightSync.vue?vue&type=script&lang=js 1:0-395 1:0-395 1:396-780 1:396-780
+ @ ./src/components/LightSync.vue 2:0-60 8:49-55 3:0-55 3:0-55
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/App.vue?vue&type=script&lang=js 6:0-51 18:4-13
+ @ ./src/App.vue?vue&type=script&lang=js 1:0-383 1:0-383 1:384-756 1:384-756
+ @ ./src/App.vue 2:0-54 8:49-55 3:0-49 3:0-49
+ @ ./src/main.js 2:0-28 10:10-13
+
+ERROR in ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/libvips.js 3:11-24
+Module not found: Error: Can't resolve 'fs' in '/app/node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib'
+ @ ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/constructor.js 6:0-39
+ @ ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/index.js 3:14-38
+ @ ./src/models/Capture.js 6:14-30
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/components/LightSync.vue?vue&type=script&lang=js 1:0-40 35:21-28
+ @ ./src/components/LightSync.vue?vue&type=script&lang=js 1:0-395 1:0-395 1:396-780 1:396-780
+ @ ./src/components/LightSync.vue 2:0-60 8:49-55 3:0-55 3:0-55
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/App.vue?vue&type=script&lang=js 6:0-51 18:4-13
+ @ ./src/App.vue?vue&type=script&lang=js 1:0-383 1:0-383 1:384-756 1:384-756
+ @ ./src/App.vue 2:0-54 8:49-55 3:0-49 3:0-49
+ @ ./src/main.js 2:0-28 10:10-13
+
+ERROR in ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/libvips.js 4:11-24
+Module not found: Error: Can't resolve 'os' in '/app/node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib'
+
+BREAKING CHANGE: webpack < 5 used to include polyfills for node.js core modules by default.
+This is no longer the case. Verify if you need this module and configure a polyfill for it.
+
+If you want to include a polyfill, you need to:
+	- add a fallback 'resolve.fallback: { "os": require.resolve("os-browserify/browser") }'
+	- install 'os-browserify'
+If you don't want to include a polyfill, you can use an empty module like this:
+	resolve.fallback: { "os": false }
+ @ ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/constructor.js 6:0-39
+ @ ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/index.js 3:14-38
+ @ ./src/models/Capture.js 6:14-30
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/components/LightSync.vue?vue&type=script&lang=js 1:0-40 35:21-28
+ @ ./src/components/LightSync.vue?vue&type=script&lang=js 1:0-395 1:0-395 1:396-780 1:396-780
+ @ ./src/components/LightSync.vue 2:0-60 8:49-55 3:0-55 3:0-55
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/App.vue?vue&type=script&lang=js 6:0-51 18:4-13
+ @ ./src/App.vue?vue&type=script&lang=js 1:0-383 1:0-383 1:384-756 1:384-756
+ @ ./src/App.vue 2:0-54 8:49-55 3:0-49 3:0-49
+ @ ./src/main.js 2:0-28 10:10-13
+
+ERROR in ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/libvips.js 5:13-28
+Module not found: Error: Can't resolve 'path' in '/app/node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib'
+
+BREAKING CHANGE: webpack < 5 used to include polyfills for node.js core modules by default.
+This is no longer the case. Verify if you need this module and configure a polyfill for it.
+
+If you want to include a polyfill, you need to:
+	- add a fallback 'resolve.fallback: { "path": require.resolve("path-browserify") }'
+	- install 'path-browserify'
+If you don't want to include a polyfill, you can use an empty module like this:
+	resolve.fallback: { "path": false }
+ @ ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/constructor.js 6:0-39
+ @ ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/index.js 3:14-38
+ @ ./src/models/Capture.js 6:14-30
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/components/LightSync.vue?vue&type=script&lang=js 1:0-40 35:21-28
+ @ ./src/components/LightSync.vue?vue&type=script&lang=js 1:0-395 1:0-395 1:396-780 1:396-780
+ @ ./src/components/LightSync.vue 2:0-60 8:49-55 3:0-55 3:0-55
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/App.vue?vue&type=script&lang=js 6:0-51 18:4-13
+ @ ./src/App.vue?vue&type=script&lang=js 1:0-383 1:0-383 1:384-756 1:384-756
+ @ ./src/App.vue 2:0-54 8:49-55 3:0-49 3:0-49
+ @ ./src/main.js 2:0-28 10:10-13
+
+ERROR in ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/libvips.js 6:18-52
+Module not found: Error: Can't resolve 'child_process' in '/app/node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib'
+ @ ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/constructor.js 6:0-39
+ @ ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/index.js 3:14-38
+ @ ./src/models/Capture.js 6:14-30
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/components/LightSync.vue?vue&type=script&lang=js 1:0-40 35:21-28
+ @ ./src/components/LightSync.vue?vue&type=script&lang=js 1:0-395 1:0-395 1:396-780 1:396-780
+ @ ./src/components/LightSync.vue 2:0-60 8:49-55 3:0-55 3:0-55
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/App.vue?vue&type=script&lang=js 6:0-51 18:4-13
+ @ ./src/App.vue?vue&type=script&lang=js 1:0-383 1:0-383 1:384-756 1:384-756
+ @ ./src/App.vue 2:0-54 8:49-55 3:0-49 3:0-49
+ @ ./src/main.js 2:0-28 10:10-13
+
+ERROR in ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/output.js 8:13-28
+Module not found: Error: Can't resolve 'path' in '/app/node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib'
+
+BREAKING CHANGE: webpack < 5 used to include polyfills for node.js core modules by default.
+This is no longer the case. Verify if you need this module and configure a polyfill for it.
+
+If you want to include a polyfill, you need to:
+	- add a fallback 'resolve.fallback: { "path": require.resolve("path-browserify") }'
+	- install 'path-browserify'
+If you don't want to include a polyfill, you can use an empty module like this:
+	resolve.fallback: { "path": false }
+ @ ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/index.js 10:0-19
+ @ ./src/models/Capture.js 6:14-30
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/components/LightSync.vue?vue&type=script&lang=js 1:0-40 35:21-28
+ @ ./src/components/LightSync.vue?vue&type=script&lang=js 1:0-395 1:0-395 1:396-780 1:396-780
+ @ ./src/components/LightSync.vue 2:0-60 8:49-55 3:0-55 3:0-55
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/App.vue?vue&type=script&lang=js 6:0-51 18:4-13
+ @ ./src/App.vue?vue&type=script&lang=js 1:0-383 1:0-383 1:384-756 1:384-756
+ @ ./src/App.vue 2:0-54 8:49-55 3:0-49 3:0-49
+ @ ./src/main.js 2:0-28 10:10-13
+
+ERROR in ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/utility.js 3:11-24
+Module not found: Error: Can't resolve 'fs' in '/app/node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib'
+ @ ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/index.js 11:0-20
+ @ ./src/models/Capture.js 6:14-30
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/components/LightSync.vue?vue&type=script&lang=js 1:0-40 35:21-28
+ @ ./src/components/LightSync.vue?vue&type=script&lang=js 1:0-395 1:0-395 1:396-780 1:396-780
+ @ ./src/components/LightSync.vue 2:0-60 8:49-55 3:0-55 3:0-55
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/App.vue?vue&type=script&lang=js 6:0-51 18:4-13
+ @ ./src/App.vue?vue&type=script&lang=js 1:0-383 1:0-383 1:384-756 1:384-756
+ @ ./src/App.vue 2:0-54 8:49-55 3:0-49 3:0-49
+ @ ./src/main.js 2:0-28 10:10-13
+
+ERROR in ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/utility.js 4:13-28
+Module not found: Error: Can't resolve 'path' in '/app/node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib'
+
+BREAKING CHANGE: webpack < 5 used to include polyfills for node.js core modules by default.
+This is no longer the case. Verify if you need this module and configure a polyfill for it.
+
+If you want to include a polyfill, you need to:
+	- add a fallback 'resolve.fallback: { "path": require.resolve("path-browserify") }'
+	- install 'path-browserify'
+If you don't want to include a polyfill, you can use an empty module like this:
+	resolve.fallback: { "path": false }
+ @ ./node_modules/.pnpm/sharp@0.30.7/node_modules/sharp/lib/index.js 11:0-20
+ @ ./src/models/Capture.js 6:14-30
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/components/LightSync.vue?vue&type=script&lang=js 1:0-40 35:21-28
+ @ ./src/components/LightSync.vue?vue&type=script&lang=js 1:0-395 1:0-395 1:396-780 1:396-780
+ @ ./src/components/LightSync.vue 2:0-60 8:49-55 3:0-55 3:0-55
+ @ ./node_modules/.pnpm/babel-loader@8.4.1_@babel+core@7.29.7_webpack@5.108.3_postcss@8.5.16_/node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[0]!./node_modules/.pnpm/vue-loader@17.4.2_@vue+compiler-sfc@3.5.39_vue@3.5.39_webpack@5.108.3_postcss@8.5.16_/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/App.vue?vue&type=script&lang=js 6:0-51 18:4-13
+ @ ./src/App.vue?vue&type=script&lang=js 1:0-383 1:0-383 1:384-756 1:384-756
+ @ ./src/App.vue 2:0-54 8:49-55 3:0-49 3:0-49
+ @ ./src/main.js 2:0-28 10:10-13
+
+webpack compiled with 12 errors
+ ELIFECYCLE  Command failed.
