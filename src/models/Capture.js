@@ -8,12 +8,11 @@ class Capture {
         this.stream = null
         this.screenId = screenId
         this.videoElement = null
-        this.videoFrame = null
         this.segData = {}
+        this.canvas = document.createElement('canvas')
+        this.ctx = this.canvas.getContext('2d', { willReadFrequently: true })
         this.startVideoStream()
         this.segmentDuration = 0
-        this.durations = []
-        this.topCount = 0
         this.segments = {
             left: [5, 6, 7, 8],
             right: [12, 13, 14, 15].reverse(),
@@ -58,81 +57,86 @@ class Capture {
         this.videoElement = document.querySelector('video')
         this.videoElement.srcObject = this.stream
         this.videoElement.onloadedmetadata = (e) => {
+            this.canvas.width = this.videoElement.videoWidth
+            this.canvas.height = this.videoElement.videoHeight
             this.videoElement.play()
             this.refresh()
-            this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
         }
 
     }
-    getVideoFrame() {
-
-        var canvas = document.createElement("canvas");
-        canvas.width = this.videoElement.videoWidth;
-        canvas.height = this.videoElement.videoHeight;
-        var canvasContext = canvas.getContext("2d");
-        canvasContext.drawImage(this.videoElement, 0, 0);
-        window.canvas = canvas
-        return canvas.toDataURL('image/png');
-
-    }
     async getSegmentColors() {
-        // var image = sharp(this.screenPng)
-        this.videoFrame = Buffer.from(this.getVideoFrame().split("base64,")[1], "base64")
-        let width = this.videoElement.videoWidth
-        let height = this.videoElement.videoHeight
+        this.ctx.drawImage(this.videoElement, 0, 0)
+        let width = this.canvas.width
+        let height = this.canvas.height
+        if (width === 0 || height === 0) return this.segData;
 
-        let promises = [
-            this.getSegmentLeft(this.segments.left, width, height),
-            this.getSegmentRight(this.segments.right, width, height),
-            this.getSegmentTop(this.segments.top, width, height),
-            this.getSegmentBottom(this.segments.bottom, width, height)
-        ]
-        this.createColorBox()
-        await Promise.all(promises)
+        const imageData = this.ctx.getImageData(0, 0, width, height).data
+
+        this.getSegmentLeft(this.segments.left, width, height, imageData)
+        this.getSegmentRight(this.segments.right, width, height, imageData)
+        this.getSegmentTop(this.segments.top, width, height, imageData)
+        this.getSegmentBottom(this.segments.bottom, width, height, imageData)
+
+        this.updateColorBox()
 
         return this.segData
 
-
-
     }
-    async getSegmentLeft(segments, width, height) {
+    getSegmentLeft(segments, width, height, imageData) {
         let cropHeight = Math.floor(height / segments.length)
         let cropWidth = Math.floor(0.3 * width)
 
-        await Promise.all(segments.map(async (segment, index) => {
-            this.segData[segment] = await this.getCropColors(0, index * cropHeight, cropWidth, cropHeight)
-        }))
+        segments.forEach((segment, index) => {
+            this.segData[segment] = this.getCropColors(0, index * cropHeight, cropWidth, cropHeight, width, imageData)
+        })
     }
-    async getSegmentRight(segments, width, height) {
+    getSegmentRight(segments, width, height, imageData) {
         let cropHeight = Math.floor(height / segments.length)
         let cropWidth = Math.floor(0.3 * width)
 
-        await Promise.all(segments.map(async (segment, index) => {
-            this.segData[segment] = await this.getCropColors(width - cropWidth, index * cropHeight, cropWidth, cropHeight)
-        }))
+        segments.forEach((segment, index) => {
+            this.segData[segment] = this.getCropColors(width - cropWidth, index * cropHeight, cropWidth, cropHeight, width, imageData)
+        })
     }
-    async getSegmentTop(segments, width, height) {
+    getSegmentTop(segments, width, height, imageData) {
         let start = Date.now()
         let cropHeight = Math.floor(height * .3)
         let cropWidth = Math.floor(width / segments.length)
 
-        await Promise.all(segments.map(async (segment, index) => {
-            this.segData[segment] = await this.getCropColors(index * cropWidth, 0, cropWidth, cropHeight)
-        }))
+        segments.forEach((segment, index) => {
+            this.segData[segment] = this.getCropColors(index * cropWidth, 0, cropWidth, cropHeight, width, imageData)
+        })
         this.singleSegmentDuration = Date.now() - start
     }
-    async getSegmentBottom(segments, width, height) {
+    getSegmentBottom(segments, width, height, imageData) {
         let cropHeight = Math.floor(height * .3)
         let cropWidth = Math.floor(width / segments.length)
 
-        await Promise.all(segments.map(async (segment, index) => {
-            this.segData[segment] = await this.getCropColors(index * cropWidth, height - cropHeight, cropWidth, cropHeight)
-        }))
+        segments.forEach((segment, index) => {
+            this.segData[segment] = this.getCropColors(index * cropWidth, height - cropHeight, cropWidth, cropHeight, width, imageData)
+        })
     }
-    async getCropColors(left, top, width, height) {
-        const { dominant } = await sharp(this.videoFrame).extract({ left, top, width, height }).stats();
-        const { r, g, b } = dominant
-        return this.rgbToHex(r, g, b)
+    getCropColors(left, top, width, height, canvasWidth, imageData) {
+        let r = 0, g = 0, b = 0;
+        let count = 0;
+
+        for (let y = top; y < top + height; y++) {
+            for (let x = left; x < left + width; x++) {
+                const i = (y * canvasWidth + x) * 4;
+                r += imageData[i];
+                g += imageData[i + 1];
+                b += imageData[i + 2];
+                count++;
+            }
+        }
+
+        if (count === 0) return "#000000";
+
+        return this.rgbToHex(
+            Math.round(r / count),
+            Math.round(g / count),
+            Math.round(b / count)
+        );
     }
     async crop(left, top, width, height) {
         await this.capture()
@@ -143,15 +147,21 @@ class Capture {
         return croppedImage
 
     }
-    createColorBox() {
+    updateColorBox() {
         let colorViewer = document.getElementById('color-viewer')
-        colorViewer.innerHTML = ""
+        let boxes = colorViewer.getElementsByClassName('color-box')
+        let i = 0
         for (let segment in this.segData) {
             let color = this.segData[segment]
-            const box = document.createElement("div");
-            box.classList.add('color-box');
-            box.style.backgroundColor = color
-            colorViewer.appendChild(box);
+            if (boxes[i]) {
+                boxes[i].style.backgroundColor = color
+            } else {
+                const box = document.createElement("div");
+                box.classList.add('color-box');
+                box.style.backgroundColor = color
+                colorViewer.appendChild(box);
+            }
+            i++
         }
     }
     capture() {
