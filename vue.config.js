@@ -12,25 +12,12 @@ module.exports = defineConfig({
       builderOptions: {
         // options placed here will be merged with default configuration and passed to electron-builder
         productName: "RGB-PC",
+        artifactName: "${productName}-Portable-${version}.${ext}",
         win: {
           icon: "./rgb.ico",
           target: [
             {
-              target: "nsis",
-              arch: [
-                "x64",
-                "ia32"
-              ]
-            },
-            {
               target: "portable",
-              arch: [
-                "x64",
-                "ia32"
-              ]
-            },
-            {
-              target: "zip",
               arch: [
                 "x64",
                 "ia32"
@@ -42,11 +29,6 @@ module.exports = defineConfig({
           target: [
             "AppImage"
           ]
-        },
-        nsis: {
-          oneClick: false,
-          allowToChangeInstallationDirectory: true,
-          installerIcon: "./rgb.ico"
         }
       }
     }
